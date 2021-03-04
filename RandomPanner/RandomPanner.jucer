@@ -11,6 +11,9 @@
       <FILE id="JIn2PH" name="PluginEditor.cpp" compile="1" resource="0"
             file="Source/PluginEditor.cpp"/>
       <FILE id="gx9Rty" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
+      <FILE id="UfYg6n" name="RandomPanning.cpp" compile="1" resource="0"
+            file="Source/RandomPanning.cpp"/>
+      <FILE id="vCmUSr" name="RandomPanning.h" compile="0" resource="0" file="Source/RandomPanning.h"/>
     </GROUP>
     <GROUP id="{B594A57F-A09E-3B55-6575-9ACF55248EDF}" name="Resources">
       <FILE id="e3Bvl3" name="MainBackground.png" compile="0" resource="1"
