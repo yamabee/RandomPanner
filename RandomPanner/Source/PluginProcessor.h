@@ -9,6 +9,7 @@
 #pragma once
 
 #include <JuceHeader.h>
+#include "RandomPanning.h"
 
 //==============================================================================
 /**
@@ -53,7 +54,21 @@ public:
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
+    float noteDuration = 1.f;
+    bool tempoSyncd = true;
+    
+    float width = 0.f;
+    float lpFrequency = 500.f;
+    float hpFrequency = 5000.f;
+    int saturation = 0;
+    float smoothing = 0.15;
+    
 private:
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (RandomPannerAudioProcessor)
+    
+    RandomPanning randPan;
+    
+    float bpm = 120.f;
+    
 };
