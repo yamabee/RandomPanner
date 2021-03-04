@@ -29,13 +29,13 @@ void KnobLookAndFeel::drawRotarySlider(Graphics &g, int x, int y, int width, int
     g.fillEllipse(dialArea);
     
     Path dialTick;
-    g.setColour(Colours::lightblue);
+    g.setColour(Colours::lightsteelblue);
     g.fillPath(dialTick);
-    dialTick.addRectangle(0,-radius,1.f, radius*0.33f);
+    dialTick.addRectangle(0,-radius,3.f, radius*0.33f);
     g.fillPath(dialTick,AffineTransform::rotation(angle).translated(centreX, centreY));
     
     
-    g.setColour(Colours::lightblue);
-    g.drawEllipse(rx, ry, diameter, diameter, 1.0);
+    g.setColour(Colours::lightsteelblue);
+    g.drawEllipse(rx, ry, diameter, diameter, 6.0);
     
 }
