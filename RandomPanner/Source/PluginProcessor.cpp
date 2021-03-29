@@ -93,8 +93,8 @@ void RandomPannerAudioProcessor::changeProgramName (int index, const juce::Strin
 //==============================================================================
 void RandomPannerAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
-    // Use this method as the place to do any pre-playback
-    // initialisation that you need..
+    randPan.prepare(sampleRate);
+    
 }
 
 void RandomPannerAudioProcessor::releaseResources()
@@ -106,6 +106,11 @@ void RandomPannerAudioProcessor::releaseResources()
 #ifndef JucePlugin_PreferredChannelConfigurations
 bool RandomPannerAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
 {
+//    const AudioChannelSet& mainInput = layouts.getMainInputChannelSet();
+//    const AudioChannelSet& mainOutput = layouts.getMainOutputChannelSet();
+//
+//    return mainInput.size() == 1 && mainOutput.size() == 2;
+    
   #if JucePlugin_IsMidiEffect
     juce::ignoreUnused (layouts);
     return true;
@@ -134,28 +139,31 @@ void RandomPannerAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
     juce::ScopedNoDenormals noDenormals;
     auto totalNumInputChannels  = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
-
-    // In case we have more outputs than inputs, this code clears any output
-    // channels that didn't contain input data, (because these aren't
-    // guaranteed to be empty - they may contain garbage).
-    // This is here to avoid people getting screaming feedback
-    // when they first compile a plugin, but obviously you don't need to keep
-    // this code if your algorithm always overwrites all the output channels.
+    
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
-
-    // This is the place where you'd normally do the guts of your plugin's
-    // audio processing...
-    // Make sure to reset the state if your inner loop is processing
-    // the samples and the outer loop is handling the channels.
-    // Alternatively, you can process the samples with the channels
-    // interleaved by keeping the same state.
-    for (int channel = 0; channel < totalNumInputChannels; ++channel)
-    {
-        auto* channelData = buffer.getWritePointer (channel);
-
-        // ..do something to the data...
-    }
+//        if (tempoSyncd) {
+//            playHead = this->getPlayHead(); // playhead pointer comes from the DAW we are assigning to the internal pointer in our plugin
+//            playHead->getCurrentPosition(currentPositionInfo); // passed by reference so it can be overwritten
+        
+//            float newBPM = currentPositionInfo.bpm;
+        
+            if (bpm != bpmValue) {
+                // update randPan
+                randPan.setBPM(bpmValue);
+                bpm = bpmValue;
+            }
+            
+            randPan.setNoteDuration(noteSelect);
+//        }
+    
+//        else{ // not tempo sync'd
+//            randPan.setBPM(timeMS);
+//
+//        }
+    
+    randPan.processSignal(buffer);
+    
 }
 
 //==============================================================================

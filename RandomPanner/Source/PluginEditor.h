@@ -35,35 +35,36 @@ public:
 private:
     ImageComponent backgroundImageComponent;
     
+    RandomPannerAudioProcessor& audioProcessor;
+    
     ComboBox noteSelector;
     Label noteSelectorLabel;
     
-    Slider widthSlider;
-    Label widthLabel;
+//    Slider widthSlider;
+//    Label widthLabel;
     
     Slider bpmSlider;
     Label bpmLabel;
     
-    Slider lpFrequencySlider;
-    Label lpFrequencyLabel;
-    ToggleButton enableLPFrequency;
-    
-    Slider hpFrequencySlider;
-    Label hpFrequencyLabel;
-    ToggleButton enableHPFrequency;
-    
-    Slider saturationSlider;
-    Label saturationLabel;
+//    Slider lpFrequencySlider;
+//    Label lpFrequencyLabel;
+//    ToggleButton enableLPFrequency;
+//
+//    Slider hpFrequencySlider;
+//    Label hpFrequencyLabel;
+//    ToggleButton enableHPFrequency;
+//
+//    Slider saturationSlider;
+//    Label saturationLabel;
     
     Slider smoothingSlider;
     Label smoothingLabel;
     
     KnobLookAndFeel knobLookAndFeel;
+//    KnobLookAndFeelV2 knobLookAndFeelV2;
     
 //    ToggleButton tempoSyncButton;
 //    ToggleButton notTempoSyncButton;
-    
-    RandomPannerAudioProcessor& audioProcessor;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (RandomPannerAudioProcessorEditor)
 };

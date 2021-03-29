@@ -28,6 +28,7 @@ RandomPannerAudioProcessorEditor::RandomPannerAudioProcessorEditor (RandomPanner
     bpmSlider.addListener(this);
     bpmSlider.setSliderStyle(Slider::SliderStyle::LinearVertical);
     bpmSlider.setTextBoxStyle(Slider::TextBoxBelow, false, 75, 20);
+    bpmSlider.setValue(audioProcessor.bpmValue);
     bpmSlider.setRange(40, 300, 1);
     addAndMakeVisible(bpmSlider);
     
@@ -36,74 +37,77 @@ RandomPannerAudioProcessorEditor::RandomPannerAudioProcessorEditor (RandomPanner
     bpmLabel.setJustificationType(Justification::centred);
     addAndMakeVisible(bpmLabel);
     
-    widthSlider.addListener(this);
-    widthSlider.setSliderStyle(Slider::SliderStyle::RotaryHorizontalVerticalDrag);
-    widthSlider.setTextBoxStyle(Slider::NoTextBox, false, 0, 0);
-    addAndMakeVisible(widthSlider);
-    
-    widthSlider.setLookAndFeel(&knobLookAndFeel);
-    
-    widthLabel.setText("Width",dontSendNotification);
-    widthLabel.attachToComponent(&widthSlider, false);
-    widthLabel.setJustificationType(Justification::centred);
-    addAndMakeVisible(widthLabel);
+//    widthSlider.addListener(this);
+//    widthSlider.setValue(audioProcessor.width);
+//    widthSlider.setSliderStyle(Slider::SliderStyle::RotaryHorizontalVerticalDrag);
+//    widthSlider.setTextBoxStyle(Slider::NoTextBox, false, 0, 0);
+//    addAndMakeVisible(widthSlider);
+//
+//    widthSlider.setLookAndFeel(&knobLookAndFeel);
+//
+//    widthLabel.setText("Width",dontSendNotification);
+//    widthLabel.attachToComponent(&widthSlider, false);
+//    widthLabel.setJustificationType(Justification::centred);
+//    addAndMakeVisible(widthLabel);
     
     noteSelector.addListener(this);
-    noteSelector.addItem("Half", 1);
-    noteSelector.addItem("Quarter", 2);
-    noteSelector.addItem("8th", 3);
-    noteSelector.addItem("16th", 4);
-    noteSelector.addItem("Dotted Quarter", 5);
-    noteSelector.addItem("Dotted 8th", 6);
-    noteSelector.addItem("Dotted 16th", 7);
-    noteSelector.setSelectedId(2);
+    noteSelector.addItem("Whole", 1);
+    noteSelector.addItem("Half", 2);
+    noteSelector.addItem("Quarter", 3);
+    noteSelector.addItem("8th", 4);
+    noteSelector.addItem("16th", 5);
+    noteSelector.addItem("Dotted Half", 6);
+    noteSelector.addItem("Dotted Quarter", 7);
+    noteSelector.addItem("Dotted 8th", 8);
+    noteSelector.addItem("Dotted 16th", 9);
+    noteSelector.setSelectedId(3);
     addAndMakeVisible(noteSelector);
     
-    lpFrequencySlider.addListener(this);
-    lpFrequencySlider.setSliderStyle(Slider::SliderStyle::RotaryHorizontalVerticalDrag);
-    lpFrequencySlider.setTextBoxStyle(Slider::TextBoxBelow, false, 75, 20);
-    lpFrequencySlider.setTextValueSuffix(" Hz");
-    lpFrequencySlider.setRange(50, 2000, 1);
-    lpFrequencySlider.setSkewFactorFromMidPoint(1000.0);
-    addAndMakeVisible(lpFrequencySlider);
-    
-    lpFrequencySlider.setLookAndFeel(&knobLookAndFeel);
+//    lpFrequencySlider.addListener(this);
+//    lpFrequencySlider.setSliderStyle(Slider::SliderStyle::RotaryHorizontalVerticalDrag);
+//    lpFrequencySlider.setTextBoxStyle(Slider::TextBoxBelow, false, 75, 20);
+//    lpFrequencySlider.setTextValueSuffix(" Hz");
+//    lpFrequencySlider.setRange(50, 2000, 1);
+//    lpFrequencySlider.setSkewFactorFromMidPoint(1000.0);
+//    addAndMakeVisible(lpFrequencySlider);
+//
+//    lpFrequencySlider.setLookAndFeel(&knobLookAndFeel);
     
     getLookAndFeel().setColour(Slider::thumbColourId, Colours::lightblue);
     getLookAndFeel().setColour(Slider::rotarySliderFillColourId, Colours::rebeccapurple);
     
-    lpFrequencyLabel.setText("LPF Frequency",dontSendNotification);
-    lpFrequencyLabel.attachToComponent(&lpFrequencySlider, false);
-    lpFrequencyLabel.setJustificationType(Justification::centred);
-    addAndMakeVisible(lpFrequencyLabel);
+//    lpFrequencyLabel.setText("LPF Frequency",dontSendNotification);
+//    lpFrequencyLabel.attachToComponent(&lpFrequencySlider, false);
+//    lpFrequencyLabel.setJustificationType(Justification::centred);
+//    addAndMakeVisible(lpFrequencyLabel);
     
-    hpFrequencySlider.addListener(this);
-    hpFrequencySlider   .setSliderStyle(Slider::SliderStyle::RotaryHorizontalVerticalDrag);
-    hpFrequencySlider.setTextBoxStyle(Slider::TextBoxBelow, false, 75, 20);
-    hpFrequencySlider.setTextValueSuffix(" Hz");
-    hpFrequencySlider.setRange(1000, 20000, 1);
-    hpFrequencySlider.setSkewFactorFromMidPoint(5000);
-    addAndMakeVisible(hpFrequencySlider);
+//    hpFrequencySlider.addListener(this);
+//    hpFrequencySlider.setSliderStyle(Slider::SliderStyle::RotaryHorizontalVerticalDrag);
+//    hpFrequencySlider.setTextBoxStyle(Slider::TextBoxBelow, false, 75, 20);
+//    hpFrequencySlider.setTextValueSuffix(" Hz");
+//    hpFrequencySlider.setRange(1000, 20000, 1);
+//    hpFrequencySlider.setSkewFactorFromMidPoint(5000);
+//    addAndMakeVisible(hpFrequencySlider);
+//
+//    hpFrequencySlider.setLookAndFeel(&knobLookAndFeel);
+//
+//    hpFrequencyLabel.setText("HPF Frequency",dontSendNotification);
+//    hpFrequencyLabel.attachToComponent(&hpFrequencySlider, false);
+//    hpFrequencyLabel.setJustificationType(Justification::centred);
+//    addAndMakeVisible(hpFrequencyLabel);
     
-    hpFrequencySlider.setLookAndFeel(&knobLookAndFeel);
-    
-    hpFrequencyLabel.setText("HPF Frequency",dontSendNotification);
-    hpFrequencyLabel.attachToComponent(&hpFrequencySlider, false);
-    hpFrequencyLabel.setJustificationType(Justification::centred);
-    addAndMakeVisible(hpFrequencyLabel);
-    
-    saturationSlider.addListener(this);
-    saturationSlider.setSliderStyle(Slider::SliderStyle::RotaryHorizontalVerticalDrag);
-    saturationSlider.setTextBoxStyle(Slider::TextBoxBelow, false, 50, 20);
-    saturationSlider.setRange(0, 10, 1);
-    addAndMakeVisible(saturationSlider);
-    
-    saturationSlider.setLookAndFeel(&knobLookAndFeel);
-    
-    saturationLabel.setText("Saturation", dontSendNotification);
-    saturationLabel.attachToComponent(&saturationSlider, false);
-    saturationLabel.setJustificationType(Justification::centred);
-    addAndMakeVisible(saturationLabel);
+//    saturationSlider.addListener(this);
+//    saturationSlider.setSliderStyle(Slider::SliderStyle::RotaryHorizontalVerticalDrag);
+//    saturationSlider.setTextBoxStyle(Slider::TextBoxBelow, false, 50, 20);
+//    saturationSlider.setRange(0, 10, 1);
+//    addAndMakeVisible(saturationSlider);
+//
+//    saturationSlider.setLookAndFeel(&knobLookAndFeel);
+//
+//    saturationLabel.setText("Saturation", dontSendNotification);
+//    saturationLabel.attachToComponent(&saturationSlider, false);
+//    saturationLabel.setJustificationType(Justification::centred);
+//    addAndMakeVisible(saturationLabel);
     
     smoothingSlider.addListener(this);
     smoothingSlider.setSliderStyle(Slider::SliderStyle::RotaryHorizontalVerticalDrag);
@@ -129,6 +133,8 @@ RandomPannerAudioProcessorEditor::RandomPannerAudioProcessorEditor (RandomPanner
 //    notTempoSyncButton.setToggleState(!audioProcessor.tempoSyncd, dontSendNotification);
 //    notTempoSyncButton.setRadioGroupId(1);
 //    addAndMakeVisible(notTempoSyncButton);
+//
+//    noteSelector.setEnabled(audioProcessor.tempoSyncd);
     
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
@@ -163,46 +169,46 @@ void RandomPannerAudioProcessorEditor::resized()
     
     Rectangle<int> bpmArea = panningSection.withTrimmedRight(325).withTrimmedTop(20).withTrimmedBottom(20).reduced(border);
     
-    Rectangle<int> widthArea = panningSection.withTrimmedLeft(180).withTrimmedRight(180).withTrimmedBottom(130).withTrimmedTop(20).reduced(border);
+//    Rectangle<int> widthArea = panningSection.withTrimmedLeft(180).withTrimmedRight(180).withTrimmedBottom(130).withTrimmedTop(20).reduced(border);
     
     Rectangle<int> noteSelectorArea = panningSection.withTrimmedLeft(150).withTrimmedRight(150).withTrimmedTop(200).withTrimmedBottom(40).reduced(border);
     
     Rectangle<int> smoothingArea = panningSection.removeFromRight(170).withTrimmedTop(75).withTrimmedBottom(75).reduced(border);
     
-    Rectangle<int> lpfArea = filterSection.removeFromTop(getHeight()/2).withTrimmedTop(20).reduced(border);
-    Rectangle<int> hpfArea = filterSection.removeFromBottom(getHeight()/2).withTrimmedTop(20).reduced(border);
+//    Rectangle<int> lpfArea = filterSection.removeFromTop(getHeight()/2).withTrimmedTop(20).reduced(border);
+//    Rectangle<int> hpfArea = filterSection.removeFromBottom(getHeight()/2).withTrimmedTop(20).reduced(border);
     
-    Rectangle<int> saturationArea = saturationSection.withTrimmedTop(75).withTrimmedBottom(75).reduced(border);
+//    Rectangle<int> saturationArea = saturationSection.withTrimmedTop(75).withTrimmedBottom(75).reduced(border);
     
     bpmSlider.setBounds(bpmArea);
-    widthSlider.setBounds(widthArea);
+//    widthSlider.setBounds(widthArea);
     noteSelector.setBounds(noteSelectorArea);
-    lpFrequencySlider.setBounds(lpfArea);
-    hpFrequencySlider.setBounds(hpfArea);
-    saturationSlider.setBounds(saturationArea);
+//    lpFrequencySlider.setBounds(lpfArea);
+//    hpFrequencySlider.setBounds(hpfArea);
+//    saturationSlider.setBounds(saturationArea);
     smoothingSlider.setBounds(smoothingArea);
     
-//    tempoSyncButton.setBounds();
-//    notTempoSyncButton.setBounds();
+//    tempoSyncButton.setBounds(275,175,100,40);
+//    notTempoSyncButton.setBounds(100, 175, 100, 40);
     
     // This is generally where you'll want to lay out the positions of any
     // subcomponents in your editor..
 }
 
 void RandomPannerAudioProcessorEditor::sliderValueChanged(Slider* slider) {
-    if (slider == &widthSlider) {
-        audioProcessor.width = widthSlider.getValue();
-    }
-    else if (slider == &lpFrequencySlider) {
-        audioProcessor.lpFrequency = lpFrequencySlider.getValue();
-    }
-    else if (slider == &hpFrequencySlider) {
-        audioProcessor.hpFrequency = hpFrequencySlider.getValue();
-    }
-    else if (slider == &saturationSlider) {
-        audioProcessor.saturation = saturationSlider.getValue();
-    }
-    else if (slider == &smoothingSlider) {
+//    if (slider == &widthSlider) {
+//        audioProcessor.width = widthSlider.getValue();
+//    }
+//    if (slider == &lpFrequencySlider) {
+//        audioProcessor.lpFrequency = lpFrequencySlider.getValue();
+//    }
+//    if (slider == &hpFrequencySlider) {
+//        audioProcessor.hpFrequency = hpFrequencySlider.getValue();
+//    }
+//    if (slider == &saturationSlider) {
+//        audioProcessor.saturation = saturationSlider.getValue();
+//    }
+    if (slider == &smoothingSlider) {
         audioProcessor.smoothing = smoothingSlider.getValue();
     }
 }
@@ -210,38 +216,48 @@ void RandomPannerAudioProcessorEditor::sliderValueChanged(Slider* slider) {
 void RandomPannerAudioProcessorEditor::comboBoxChanged(ComboBox* comboBox) {
     if (comboBox == &noteSelector) {
         if (noteSelector.getSelectedId() == 1) {
-            // half note
-            audioProcessor.noteDuration = 2.f;
+            // whole
+            audioProcessor.noteSelect = RandomPanning::NoteSelection::WHOLE;
         }
         
         if (noteSelector.getSelectedId() == 2) {
-            // quarter note
-            audioProcessor.noteDuration = 1.f;
+            // half
+            audioProcessor.noteSelect = RandomPanning::NoteSelection::HALF;
         }
         
         if (noteSelector.getSelectedId() == 3) {
-            // 8th note
-            audioProcessor.noteDuration = 0.5f;
+            // quarter
+            audioProcessor.noteSelect = RandomPanning::NoteSelection::QUARTER;
         }
         
         if (noteSelector.getSelectedId() == 4) {
-            // 16th note
-            audioProcessor.noteDuration = 0.25;
+            // 8th
+            audioProcessor.noteSelect = RandomPanning::NoteSelection::EIGHTH;
         }
         
         if (noteSelector.getSelectedId() == 5) {
-            // dotted quarter
-            audioProcessor.noteDuration = 1.5;
+            // 16th
+            audioProcessor.noteSelect = RandomPanning::NoteSelection::SIXTEENTH;
         }
         
         if (noteSelector.getSelectedId() == 6) {
-            // dotted 8th
-            audioProcessor.noteDuration = 0.75;
+            // dotted half
+            audioProcessor.noteSelect = RandomPanning::NoteSelection::DOTTEDHALF;
         }
         
         if (noteSelector.getSelectedId() == 7) {
+            // dotted quarter
+            audioProcessor.noteSelect = RandomPanning::NoteSelection::DOTTEDQUARTER;
+        }
+        
+        if (noteSelector.getSelectedId() == 8) {
+            // dotted 8th
+            audioProcessor.noteSelect = RandomPanning::NoteSelection::DOTTEDEIGHTH;
+        }
+        
+        if (noteSelector.getSelectedId() == 9) {
             // dotted 16th
-            audioProcessor.noteDuration = 0.375;
+            audioProcessor.noteSelect = RandomPanning::NoteSelection::DOTTEDSIXTEENTH;
         }
     }
 }

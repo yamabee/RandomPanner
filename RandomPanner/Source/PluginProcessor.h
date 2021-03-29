@@ -53,22 +53,29 @@ public:
     //==============================================================================
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
-
-    float noteDuration = 1.f;
-    bool tempoSyncd = true;
     
-    float width = 0.f;
-    float lpFrequency = 500.f;
-    float hpFrequency = 5000.f;
-    int saturation = 0;
+    float bpmValue = 120.f;
+//    float timeMS = 100.f;
+    RandomPanning::NoteSelection noteSelect = RandomPanning::NoteSelection::QUARTER;
+    
+//    bool tempoSyncd = true;
+    
+//    float width = 0.f;
+//    float lpFrequency = 500.f;
+//    float hpFrequency = 5000.f;
+//    int saturation = 0;
     float smoothing = 0.15;
     
 private:
-    //==============================================================================
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (RandomPannerAudioProcessor)
     
     RandomPanning randPan;
     
-    float bpm = 120.f;
+    AudioPlayHead* playHead; // pointer to the object
+    AudioPlayHead::CurrentPositionInfo currentPositionInfo; // need to check playHead each time through the buffer
     
+    float bpm = bpmValue;
+    
+    //==============================================================================
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (RandomPannerAudioProcessor)
+
 };

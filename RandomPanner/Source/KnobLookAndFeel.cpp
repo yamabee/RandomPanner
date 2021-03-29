@@ -39,3 +39,38 @@ void KnobLookAndFeel::drawRotarySlider(Graphics &g, int x, int y, int width, int
     g.drawEllipse(rx, ry, diameter, diameter, 6.0);
     
 }
+
+KnobLookAndFeelV2::KnobLookAndFeelV2() {
+    auto myKnob = ImageCache::getFromMemory(BinaryData::personalizedKnob_png, BinaryData::personalizedKnob_pngSize);
+}
+    
+void KnobLookAndFeelV2::drawRotarySlider(Graphics &g, int x, int y, int width, int height, float sliderPos, const float rotaryStartAngle, const float rotaryEndAngle, Slider &slider) {
+    
+    const float angle = rotaryStartAngle + sliderPos * (rotaryEndAngle - rotaryStartAngle);
+    
+    AffineTransform rotator;
+//    g.drawImageTransformed(sprite, rotator.rotated(angle), (float)(sprite.getWidth()/2), (float)(sprite.getHeight()/2));
+        
+//    if (myKnob.isValid()) {
+//        const double rotation = (slider.getValue() - slider.getMinimum()) / (slider.getMaximum() - slider.getMinimum());
+//        const int frames = myKnob.getHeight() / myKnob.getWidth();
+//        const int frameId = (int)ceil(rotation * ((double)frames - 1.0));
+//        const float radius = jmin(width/2.0f, height/2.0f);
+//        const float centreX = x + width * 0.5f;
+//        const float centreY = y + height * 0.5f;
+//        const float rx = centreX - radius - 1.0f;
+//        const float ry = centreY - radius;
+//
+//        g.drawImage(myKnob, (int)rx, (int)ry, 2 * (int)radius, 2 * (int)radius, 0, frameId*myKnob.getWidth(), myKnob.getWidth(), myKnob.getWidth());
+//    }
+//
+//    else {
+//        static const float textPercent = 0.35f;
+//        Rectangle<float> text_bounds(1.f + width * (1.f - textPercent) / 2.f, 0.5f * height, width * textPercent, 0.5f * height);
+//
+//        g.setColour(Colours::white);
+//
+//        g.drawFittedText(String("No Image"), text_bounds.getSmallestIntegerContainer(), Justification::horizontallyCentred, Justification::centred, 1);
+//    }
+}
+
