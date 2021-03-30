@@ -10,6 +10,8 @@
 
 #include <JuceHeader.h>
 #include "RandomPanning.h"
+#include "Saturation.h"
+#include "Biquad.h"
 
 //==============================================================================
 /**
@@ -54,26 +56,32 @@ public:
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
     
-    float bpmValue = 120.f;
-//    float timeMS = 100.f;
+
+    
+    float timeMS = 100.f;
     RandomPanning::NoteSelection noteSelect = RandomPanning::NoteSelection::QUARTER;
     
-//    bool tempoSyncd = true;
+    bool tempoSyncd = true;
     
 //    float width = 0.f;
-//    float lpFrequency = 500.f;
-//    float hpFrequency = 5000.f;
-//    int saturation = 0;
+    float lpFrequency = 20000.f;
+    float hpFrequency = 50.f;
+    int satAlpha = 1;
     float smoothing = 0.15;
+    
+    bool saturationOn = true;
     
 private:
     
     RandomPanning randPan;
+    Saturation saturation;
+    Biquad lowPass;
+    Biquad highPass;
     
     AudioPlayHead* playHead; // pointer to the object
     AudioPlayHead::CurrentPositionInfo currentPositionInfo; // need to check playHead each time through the buffer
     
-    float bpm = bpmValue;
+    float bpm = 120.f;
     
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (RandomPannerAudioProcessor)

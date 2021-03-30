@@ -24,14 +24,24 @@ public:
     void processSignal(juce::AudioBuffer<float> &buffer);
     float processSample(float x, int chan);
     
+    float processSampleL(float x);
+    float processSampleR(float x);
+    
     void prepare(float newFs);
     
     void setTimeMS(float newTimeMS);
+    
     void setBPM(float newBPM);
-    void setBeatSamples();
+    
     enum NoteSelection {WHOLE, HALF, QUARTER, EIGHTH, SIXTEENTH, DOTTEDHALF, DOTTEDQUARTER, DOTTEDEIGHTH, DOTTEDSIXTEENTH};
     void setNoteDuration(NoteSelection newNoteSelection);
+    
+    void setBeatSamples();
+    
     void setPan();
+    void setRandomNumber();
+    
+    void setSmoothing(float newAlphaSmooth);
     
 private:
     float Fs = 48000.f;
@@ -40,12 +50,12 @@ private:
     NoteSelection noteSelect = QUARTER;
     
     float noteDuration = 1.f; // 1 - quarter, 2 - half, 0.5 - 8th, 0.25 - 16th
-    float timeMS = 500.f;
     
+    float timeMS = 500.f;
     float timeSamples = round(timeMS*Fs/1000.f); // number of samples before random value changes
     
-    float beatSamples = 24000.f;
-    float noteSamples = 24000.f;
+//    float beatSamples = 24000.f;
+//    float noteSamples = 24000.f;
     
     float panValue = rand() % 1;
     float leftAmp = sqrt(0.5f);
@@ -57,5 +67,8 @@ private:
     
     int count = 1;
     float y = 0.f;
+    
+    float randomNumber = 0;
+    float randomNumberPrev = 0;
     
 };

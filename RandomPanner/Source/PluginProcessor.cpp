@@ -95,6 +95,14 @@ void RandomPannerAudioProcessor::prepareToPlay (double sampleRate, int samplesPe
 {
     randPan.prepare(sampleRate);
     
+    lowPass.setFs(sampleRate);
+    lowPass.setFilterType(Biquad::LPF);
+    lowPass.setFreq(lpFrequency);
+    
+    highPass.setFs(sampleRate);
+    highPass.setFilterType(Biquad::HPF);
+    highPass.setFreq(hpFrequency);
+    
 }
 
 void RandomPannerAudioProcessor::releaseResources()
@@ -106,10 +114,6 @@ void RandomPannerAudioProcessor::releaseResources()
 #ifndef JucePlugin_PreferredChannelConfigurations
 bool RandomPannerAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
 {
-//    const AudioChannelSet& mainInput = layouts.getMainInputChannelSet();
-//    const AudioChannelSet& mainOutput = layouts.getMainOutputChannelSet();
-//
-//    return mainInput.size() == 1 && mainOutput.size() == 2;
     
   #if JucePlugin_IsMidiEffect
     juce::ignoreUnused (layouts);
@@ -142,30 +146,46 @@ void RandomPannerAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
     
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
-//        if (tempoSyncd) {
-//            playHead = this->getPlayHead(); // playhead pointer comes from the DAW we are assigning to the internal pointer in our plugin
-//            playHead->getCurrentPosition(currentPositionInfo); // passed by reference so it can be overwritten
-        
-//            float newBPM = currentPositionInfo.bpm;
-        
-            if (bpm != bpmValue) {
-                // update randPan
-                randPan.setBPM(bpmValue);
-                bpm = bpmValue;
-            }
-            
-            randPan.setNoteDuration(noteSelect);
-//        }
     
-//        else{ // not tempo sync'd
-//            randPan.setBPM(timeMS);
-//
-//        }
+    randPan.setSmoothing(smoothing);
+    saturation.setAlpha(satAlpha);
+    
+    if (tempoSyncd) {
+        playHead = this->getPlayHead(); // playhead pointer comes from the DAW we are assigning to the internal pointer in our plugin
+        playHead->getCurrentPosition(currentPositionInfo); // passed by reference so it can be overwritten
+        
+        float newBPM = currentPositionInfo.bpm;
+        
+        if (bpm != newBPM) {
+            // update randPan
+            randPan.setBPM(newBPM);
+            bpm = newBPM;
+        }
+        randPan.setNoteDuration(noteSelect);
+        
+    }
+    
+    else { // not tempo sync'd
+        randPan.setTimeMS(timeMS);
+        
+    }
     
     randPan.processSignal(buffer);
+    saturation.processSignal(buffer);
     
+    lowPass.setFreq((double)lpFrequency);
+    highPass.setFreq((double)hpFrequency);
+    for (int channel = 0; channel < totalNumInputChannels; ++channel)
+        {
+            for (int n = 0; n < buffer.getNumSamples() ; ++n){
+                float x = buffer.getReadPointer(channel)[n];
+                x = lowPass.processSample(x, channel);
+                x = highPass.processSample(x, channel);
+                buffer.getWritePointer(channel)[n] = x;
+            }
+        }
 }
-
+    
 //==============================================================================
 bool RandomPannerAudioProcessor::hasEditor() const
 {

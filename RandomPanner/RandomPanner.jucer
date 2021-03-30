@@ -14,6 +14,10 @@
       <FILE id="UfYg6n" name="RandomPanning.cpp" compile="1" resource="0"
             file="Source/RandomPanning.cpp"/>
       <FILE id="vCmUSr" name="RandomPanning.h" compile="0" resource="0" file="Source/RandomPanning.h"/>
+      <FILE id="Z6yu3h" name="Saturation.cpp" compile="1" resource="0" file="Source/Saturation.cpp"/>
+      <FILE id="L3nJ7l" name="Saturation.h" compile="0" resource="0" file="Source/Saturation.h"/>
+      <FILE id="aYfZFJ" name="Biquad.cpp" compile="1" resource="0" file="../../AET5895-SP21/ClassExamples/BasicVerb/Source/Biquad.cpp"/>
+      <FILE id="NQVhtm" name="Biquad.h" compile="0" resource="0" file="../../AET5895-SP21/ClassExamples/BasicVerb/Source/Biquad.h"/>
       <FILE id="ES9aap" name="KnobLookAndFeel.cpp" compile="1" resource="0"
             file="Source/KnobLookAndFeel.cpp"/>
       <FILE id="HK4Nlk" name="KnobLookAndFeel.h" compile="0" resource="0"

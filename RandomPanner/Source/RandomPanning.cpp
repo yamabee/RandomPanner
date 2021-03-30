@@ -15,7 +15,7 @@ RandomPanning::RandomPanning(){}
 
 void RandomPanning::processSignal(juce::AudioBuffer<float> &buffer) {
     float* leftChannel = buffer.getWritePointer(0);
-    float* rightChannel = buffer.getWritePointer(0);
+    float* rightChannel = buffer.getWritePointer(1);
     int N = buffer.getNumSamples();
     
     processSignal(leftChannel, rightChannel, N);
@@ -47,40 +47,64 @@ float RandomPanning::processSample(float x, int chan) {
     
     if (chan == 0) {
         leftAmpSmooth = alphaSmooth * leftAmpSmooth + (1-alphaSmooth) * leftAmp;
-        y = leftAmp * x;
+        y = leftAmpSmooth * x;
     }
     else if (chan == 1) {
         rightAmpSmooth = alphaSmooth * rightAmpSmooth + (1-alphaSmooth) * rightAmp;
-        y = rightAmp * x;
+        y = rightAmpSmooth * x;
         
         count++;
-    }
-    
-    if (count == timeSamples) {
-        setPan();
-        count = 1;
         
+        if (count >= timeSamples) {
+            setPan();
+            count = 1;
+            
+        }
     }
     
     return y;
     
 }
 
+//float RandomPanning::processSampleL(float x) {
+//
+//
+//    leftAmpSmooth = alphaSmooth * leftAmpSmooth + (1-alphaSmooth) * leftAmp;
+//    y = leftAmpSmooth * x;
+//
+//    return y;
+//}
+//
+//float RandomPanning::processSampleR(float x) {
+//    rightAmpSmooth = alphaSmooth * rightAmpSmooth + (1-alphaSmooth) * rightAmp;
+//    y = rightAmpSmooth * x;
+//    
+//    count++;
+//
+//    if (count >= timeSamples) {
+//        setPan();
+//        count = 1;
+//    }
+//
+//    return y;
+//}
+
+
 void RandomPanning::prepare(float newFs) {
     Fs = newFs;
-    setBeatSamples();
+    timeSamples = round(timeMS*Fs/1000.f);
     
 }
 
 void RandomPanning::setBPM(float newBPM) {
     bpm = newBPM;
     setBeatSamples();
-    
 }
 
 void RandomPanning::setTimeMS(float newTimeMS) {
     timeMS = newTimeMS;
     timeSamples = round(timeMS*Fs/1000.f);
+//    count = 1;
     
 }
 
@@ -98,6 +122,7 @@ void RandomPanning::setNoteDuration(NoteSelection newNoteSelection) {
             
         case QUARTER:
             noteDuration = 1;
+            
             break;
             
         case EIGHTH:
@@ -114,6 +139,7 @@ void RandomPanning::setNoteDuration(NoteSelection newNoteSelection) {
             
         case DOTTEDQUARTER:
             noteDuration = 1.5;
+            break;
             
         case DOTTEDEIGHTH:
             noteDuration = 0.75;
@@ -135,20 +161,42 @@ void RandomPanning::setNoteDuration(NoteSelection newNoteSelection) {
 void RandomPanning::setBeatSamples(){
     float bps = bpm/60.f;
     float secondsPerBeat = 1.f/bps;
-    beatSamples = secondsPerBeat * Fs;
-    noteSamples = beatSamples * noteDuration;
+//    beatSamples = secondsPerBeat * Fs;
+//    noteSamples = beatSamples * noteDuration;
     float secondsPerNote = noteDuration * secondsPerBeat;
     float msPerNote = secondsPerNote * 1000.f;
     setTimeMS(msPerNote);
     
 }
 
+void RandomPanning::setSmoothing(float newAlphaSmooth) {
+    alphaSmooth = newAlphaSmooth;
+}
+
 void RandomPanning::setPan() {
-    panValue = rand() % 1;
+    setRandomNumber();
+    panValue = randomNumber;
     leftAmp = sqrt(1-panValue);
     rightAmp = sqrt(panValue);
     
 }
 
-
-
+void RandomPanning::setRandomNumber() {
+    
+    if (randomNumberPrev <= 0.5) {
+        randomNumber = (float)rand()/RAND_MAX;
+        while (randomNumber <= 0.5) {
+            randomNumber = (float)rand()/RAND_MAX;
+        }
+    }
+    
+    else if (randomNumberPrev > 0.5) {
+        randomNumber = (float)rand()/RAND_MAX;
+        while (randomNumber > 0.5) {
+            randomNumber = (float)rand()/RAND_MAX;
+        }
+    }
+    
+    randomNumberPrev = randomNumber;
+    
+}
