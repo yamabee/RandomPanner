@@ -77,24 +77,24 @@ RandomPannerAudioProcessorEditor::RandomPannerAudioProcessorEditor (RandomPanner
     getLookAndFeel().setColour(Slider::thumbColourId, Colours::lightblue);
     getLookAndFeel().setColour(Slider::rotarySliderFillColourId, Colours::rebeccapurple);
     
-    lpFrequencyLabel.setText("LPF Frequency",dontSendNotification);
+    lpFrequencyLabel.setText("LPF Cut-Off",dontSendNotification);
     lpFrequencyLabel.attachToComponent(&lpCutOffSlider, false);
     lpFrequencyLabel.setJustificationType(Justification::centred);
     addAndMakeVisible(lpFrequencyLabel);
     
-    hpFrequencySlider.addListener(this);
-    hpFrequencySlider.setSliderStyle(Slider::SliderStyle::RotaryHorizontalVerticalDrag);
-    hpFrequencySlider.setTextBoxStyle(Slider::TextBoxBelow, false, 75, 20);
-    hpFrequencySlider.setTextValueSuffix(" Hz");
-    hpFrequencySlider.setRange(50, 20000, 1);
-    hpFrequencySlider.setValue(audioProcessor.hpFrequency);
-    hpFrequencySlider.setSkewFactorFromMidPoint(5000);
-    addAndMakeVisible(hpFrequencySlider);
+    hpCutOffSlider.addListener(this);
+    hpCutOffSlider.setSliderStyle(Slider::SliderStyle::RotaryHorizontalVerticalDrag);
+    hpCutOffSlider.setTextBoxStyle(Slider::TextBoxBelow, false, 75, 20);
+    hpCutOffSlider.setTextValueSuffix(" Hz");
+    hpCutOffSlider.setRange(50, 20000, 1);
+    hpCutOffSlider.setValue(audioProcessor.hpFrequency);
+    hpCutOffSlider.setSkewFactorFromMidPoint(5000);
+    addAndMakeVisible(hpCutOffSlider);
 
-    hpFrequencySlider.setLookAndFeel(&knobLookAndFeel);
+    hpCutOffSlider.setLookAndFeel(&knobLookAndFeel);
 
-    hpFrequencyLabel.setText("HPF Frequency",dontSendNotification);
-    hpFrequencyLabel.attachToComponent(&hpFrequencySlider, false);
+    hpFrequencyLabel.setText("HPF Cut-Off",dontSendNotification);
+    hpFrequencyLabel.attachToComponent(&hpCutOffSlider, false);
     hpFrequencyLabel.setJustificationType(Justification::centred);
     addAndMakeVisible(hpFrequencyLabel);
     
@@ -141,15 +141,29 @@ RandomPannerAudioProcessorEditor::RandomPannerAudioProcessorEditor (RandomPanner
     noteSelector.setEnabled(audioProcessor.tempoSyncd);
     timeSlider.setEnabled(!audioProcessor.tempoSyncd);
     
-//    satEnabledButton.addListener(this);
-//    satEnabledButton.setButtonText("Enabled");
-//    satEnabledButton.setToggleState(!audioProcessor.saturationOn, dontSendNotification);
-//    addAndMakeVisible(satEnabledButton);
+    saturationEnabledButton.addListener(this);
+    saturationEnabledButton.setToggleState(audioProcessor.saturationEnabled, dontSendNotification);
+    saturationEnabledButton.setButtonText("Disabled");
+    saturationSlider.setEnabled(audioProcessor.saturationEnabled);
+    saturationEnabledButton.setColour(TextButton::buttonOnColourId, Colours::lightsteelblue);
+    saturationEnabledButton.setColour(TextButton::textColourOnId, Colours::black);
+    addAndMakeVisible(saturationEnabledButton);
     
-//    satEnabledButton.onClick = [this] {
-//        audioProcessor.saturationOn = false;
-//        saturationSlider.setEnabled(false);
-//    };
+    lpEnabledButton.addListener(this);
+    lpEnabledButton.setToggleState(audioProcessor.lpEnabled, dontSendNotification);
+    lpEnabledButton.setButtonText("Disabled");
+    lpCutOffSlider.setEnabled(audioProcessor.lpEnabled);
+    lpEnabledButton.setColour(TextButton::buttonOnColourId, Colours::lightsteelblue);
+    lpEnabledButton.setColour(TextButton::textColourOnId, Colours::black);
+    addAndMakeVisible(lpEnabledButton);
+    
+    hpEnabledButton.addListener(this);
+    hpEnabledButton.setToggleState(audioProcessor.hpEnabled, dontSendNotification);
+    hpEnabledButton.setButtonText("Disabled");
+    hpCutOffSlider.setEnabled(audioProcessor.hpEnabled);
+    hpEnabledButton.setColour(TextButton::buttonOnColourId, Colours::lightsteelblue);
+    hpEnabledButton.setColour(TextButton::textColourOnId, Colours::black);
+    addAndMakeVisible(hpEnabledButton);
     
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
@@ -199,14 +213,16 @@ void RandomPannerAudioProcessorEditor::resized()
 //    widthSlider.setBounds(widthArea);
     noteSelector.setBounds(noteSelectorArea);
     lpCutOffSlider.setBounds(lpfArea);
-    hpFrequencySlider.setBounds(hpfArea);
+    hpCutOffSlider.setBounds(hpfArea);
     saturationSlider.setBounds(saturationArea);
     smoothingSlider.setBounds(smoothingArea);
     
     tempoSyncButton.setBounds(200, 260, 100, 40);
     notTempoSyncButton.setBounds(47.5, 260, 100, 40);
     
-//    satEnabledButton.setBounds(650, 0, 150, 300);
+    saturationEnabledButton.setBounds(650, 0, 75, 25);
+    lpEnabledButton.setBounds(500,0,75,25);
+    hpEnabledButton.setBounds(500, 200, 75, 25);
     
     // This is generally where you'll want to lay out the positions of any
     // subcomponents in your editor..
@@ -219,8 +235,8 @@ void RandomPannerAudioProcessorEditor::sliderValueChanged(Slider* slider) {
     if (slider == &lpCutOffSlider) {
         audioProcessor.lpFrequency = lpCutOffSlider.getValue();
     }
-    if (slider == &hpFrequencySlider) {
-        audioProcessor.hpFrequency = hpFrequencySlider.getValue();
+    if (slider == &hpCutOffSlider) {
+        audioProcessor.hpFrequency = hpCutOffSlider.getValue();
     }
     if (slider == &saturationSlider) {
         audioProcessor.satAlpha = saturationSlider.getValue();
@@ -283,6 +299,60 @@ void RandomPannerAudioProcessorEditor::comboBoxChanged(ComboBox* comboBox) {
     }
 }
 
+void RandomPannerAudioProcessorEditor::setButtonDisabled(Button* button) {
+    if (button == &saturationEnabledButton) {
+        saturationButtonState = ButtonState::Disabled;
+        audioProcessor.setButtonState(audioProcessor.saturationEnabled);
+        saturationEnabledButton.setToggleState(audioProcessor.saturationEnabled, dontSendNotification);
+        saturationEnabledButton.setButtonText("Disabled");
+        saturationSlider.setEnabled(audioProcessor.saturationEnabled);
+    }
+    
+    if (button == &lpEnabledButton) {
+        lpButtonState = ButtonState::Disabled;
+        audioProcessor.setButtonState(audioProcessor.lpEnabled);
+        lpEnabledButton.setToggleState(audioProcessor.lpEnabled, dontSendNotification);
+        lpEnabledButton.setButtonText("Disabled");
+        lpCutOffSlider.setEnabled(audioProcessor.lpEnabled);
+    }
+    
+    if (button == &hpEnabledButton) {
+        hpButtonState = ButtonState::Disabled;
+        audioProcessor.setButtonState(audioProcessor.hpEnabled);
+        hpEnabledButton.setToggleState(audioProcessor.hpEnabled, dontSendNotification);
+        hpEnabledButton.setButtonText("Disabled");
+        hpCutOffSlider.setEnabled(audioProcessor.hpEnabled);
+    }
+    // want to set the linked element to be enabled
+}
+
+void RandomPannerAudioProcessorEditor::setButtonEnabled(Button* button) {
+    if (button == &saturationEnabledButton) {
+        saturationButtonState = ButtonState::Enabled;
+        audioProcessor.setButtonState(audioProcessor.saturationEnabled);
+        saturationEnabledButton.setToggleState(audioProcessor.saturationEnabled, dontSendNotification);
+        saturationEnabledButton.setButtonText("Enabled");
+        saturationSlider.setEnabled(audioProcessor.saturationEnabled);
+    }
+    
+    if (button == &lpEnabledButton) {
+        lpButtonState = ButtonState::Enabled;
+        audioProcessor.setButtonState(audioProcessor.lpEnabled);
+        lpEnabledButton.setToggleState(audioProcessor.lpEnabled, dontSendNotification);
+        lpEnabledButton.setButtonText("Enabled");
+        lpCutOffSlider.setEnabled(audioProcessor.lpEnabled);
+    }
+    
+    if (button == &hpEnabledButton) {
+        hpButtonState = ButtonState::Enabled;
+        audioProcessor.setButtonState(audioProcessor.hpEnabled);
+        hpEnabledButton.setToggleState(audioProcessor.hpEnabled, dontSendNotification);
+        hpEnabledButton.setButtonText("Enabled");
+        hpCutOffSlider.setEnabled(audioProcessor.hpEnabled);
+    }
+    // want to set the linked element to be enabled
+}
+
 void RandomPannerAudioProcessorEditor::buttonClicked(Button* button) {
     if (button == &tempoSyncButton) {
         audioProcessor.tempoSyncd = true;
@@ -296,8 +366,49 @@ void RandomPannerAudioProcessorEditor::buttonClicked(Button* button) {
         noteSelector.setEnabled(false);
     }
     
-//    if (button == &satEnabledButton) {
-//        if  ()
-//    }
+    if (button == &saturationEnabledButton) {
+        if (saturationButtonState == ButtonState::Disabled) {
+            saturationEnabledButton.onClick = [this]() {
+                setButtonEnabled(&saturationEnabledButton);
+                
+            };
+        }
+        else if (saturationButtonState == ButtonState::Enabled) {
+            saturationEnabledButton.onClick = [this]() {
+                setButtonDisabled(&saturationEnabledButton);
+                
+            };
+        }
+    }
+    
+    if (button == &lpEnabledButton) {
+        if (lpButtonState == ButtonState::Disabled) {
+            lpEnabledButton.onClick = [this]() {
+                setButtonEnabled(&lpEnabledButton);
+                
+            };
+        }
+        else if (lpButtonState == ButtonState::Enabled) {
+            lpEnabledButton.onClick = [this]() {
+                setButtonDisabled(&lpEnabledButton);
+                
+            };
+        }
+    }
+    
+    if (button == &hpEnabledButton) {
+        if (hpButtonState == ButtonState::Disabled) {
+            hpEnabledButton.onClick = [this]() {
+                setButtonEnabled(&hpEnabledButton);
+                
+            };
+        }
+        else if (hpButtonState == ButtonState::Enabled) {
+            hpEnabledButton.onClick = [this]() {
+                setButtonDisabled(&hpEnabledButton);
+                
+            };
+        }
+    }
 }
 

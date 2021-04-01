@@ -32,6 +32,9 @@ public:
     void sliderValueChanged(Slider* slider) override;
     void comboBoxChanged(ComboBox* comboBox) override;
     void buttonClicked(Button* button) override;
+    
+    void setButtonEnabled(Button* button);
+    void setButtonDisabled(Button* button);
 
 private:
     ImageComponent backgroundImageComponent;
@@ -52,7 +55,7 @@ private:
     
 //    ToggleButton enableLPFrequency;
     
-    Slider hpFrequencySlider;
+    Slider hpCutOffSlider;
     Label hpFrequencyLabel;
 //    ToggleButton enableHPFrequency;
     
@@ -68,7 +71,18 @@ private:
     ToggleButton tempoSyncButton;
     ToggleButton notTempoSyncButton;
     
-//    ToggleButton satEnabledButton;
+    enum class ButtonState {
+        Enabled,
+        Disabled
+    };
+    
+    ButtonState saturationButtonState { ButtonState::Disabled };
+    ButtonState lpButtonState { ButtonState::Disabled };
+    ButtonState hpButtonState { ButtonState::Disabled };
+
+    TextButton saturationEnabledButton { "Enabled" };
+    TextButton lpEnabledButton { "Enabled" };
+    TextButton hpEnabledButton { "Enabled" };
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (RandomPannerAudioProcessorEditor)
 };

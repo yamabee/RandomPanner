@@ -62,14 +62,17 @@ public:
     RandomPanning::NoteSelection noteSelect = RandomPanning::NoteSelection::QUARTER;
     
     bool tempoSyncd = true;
+    bool saturationEnabled = false;
+    bool lpEnabled = false;
+    bool hpEnabled = false;
+    
+    void setButtonState(bool& buttonState);
     
 //    float width = 0.f;
-    float lpFrequency = 20000.f;
-    float hpFrequency = 50.f;
+    float lpFrequency = 1000.f;
+    float hpFrequency = 1000.f;
     int satAlpha = 1;
     float smoothing = 0.15;
-    
-    bool saturationOn = true;
     
 private:
     

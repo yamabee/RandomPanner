@@ -15,7 +15,7 @@ RandomPannerAudioProcessor::RandomPannerAudioProcessor()
      : AudioProcessor (BusesProperties()
                      #if ! JucePlugin_IsMidiEffect
                       #if ! JucePlugin_IsSynth
-                       .withInput  ("Input",  juce::AudioChannelSet::stereo(), true)
+                       .withInput  ("Input",  juce::AudioChannelSet::stereo(), false)
                       #endif
                        .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
                      #endif
@@ -149,38 +149,50 @@ void RandomPannerAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
     
     randPan.setSmoothing(smoothing);
     saturation.setAlpha(satAlpha);
-    
-    if (tempoSyncd) {
-        playHead = this->getPlayHead(); // playhead pointer comes from the DAW we are assigning to the internal pointer in our plugin
-        playHead->getCurrentPosition(currentPositionInfo); // passed by reference so it can be overwritten
-        
-        float newBPM = currentPositionInfo.bpm;
-        
-        if (bpm != newBPM) {
-            // update randPan
-            randPan.setBPM(newBPM);
-            bpm = newBPM;
-        }
-        randPan.setNoteDuration(noteSelect);
-        
-    }
-    
-    else { // not tempo sync'd
-        randPan.setTimeMS(timeMS);
-        
-    }
-    
-    randPan.processSignal(buffer);
-    saturation.processSignal(buffer);
-    
     lowPass.setFreq((double)lpFrequency);
     highPass.setFreq((double)hpFrequency);
+    
+//    if (tempoSyncd) {
+//        playHead = this->getPlayHead(); // playhead pointer comes from the DAW we are assigning to the internal pointer in our plugin
+//        playHead->getCurrentPosition(currentPositionInfo); // passed by reference so it can be overwritten
+//        
+//        float newBPM = currentPositionInfo.bpm;
+//        
+//        if (bpm != newBPM) {
+//            // update randPan
+//            randPan.setBPM(newBPM);
+//            bpm = newBPM;
+//        }
+//        randPan.setNoteDuration(noteSelect);
+//        
+//    }
+//    
+//    else { // not tempo sync'd
+//        randPan.setTimeMS(timeMS);
+//        
+//    }
+    
+//    randPan.processSignal(buffer);
+//    saturation.processSignal(buffer);
+    
     for (int channel = 0; channel < totalNumInputChannels; ++channel)
         {
             for (int n = 0; n < buffer.getNumSamples() ; ++n){
                 float x = buffer.getReadPointer(channel)[n];
-                x = lowPass.processSample(x, channel);
-                x = highPass.processSample(x, channel);
+                x = randPan.processSample(x, channel);
+                
+                if (saturationEnabled) {
+                    x = saturation.processSample(x, channel);
+                }
+                
+                if (lpEnabled) {
+                    x = lowPass.processSample(x, channel);
+                }
+                
+                if (hpEnabled) {
+                    x = highPass.processSample(x, channel);
+                }
+                
                 buffer.getWritePointer(channel)[n] = x;
             }
         }
@@ -216,4 +228,13 @@ void RandomPannerAudioProcessor::setStateInformation (const void* data, int size
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
     return new RandomPannerAudioProcessor();
+}
+
+void RandomPannerAudioProcessor::setButtonState(bool& buttonState) {
+    if (buttonState == true) {
+        buttonState = false;
+    }
+    else if (buttonState == false) {
+        buttonState = true;
+    }
 }
