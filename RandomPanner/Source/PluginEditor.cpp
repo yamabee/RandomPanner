@@ -14,9 +14,9 @@ RandomPannerAudioProcessorEditor::RandomPannerAudioProcessorEditor (RandomPanner
     : AudioProcessorEditor (&p), audioProcessor (p)
 {
     
-//==============================================================================
-// SET BACKGROUND
-//==============================================================================
+    //==============================================================================
+    // SET BACKGROUND
+    //==============================================================================
     auto backgroundImage = ImageCache::getFromMemory(BinaryData::MainBackground_png, BinaryData::MainBackground_pngSize);
     
     if (! backgroundImage.isNull()) {
@@ -28,15 +28,15 @@ RandomPannerAudioProcessorEditor::RandomPannerAudioProcessorEditor (RandomPanner
     
     addAndMakeVisible(backgroundImageComponent);
     
-//==============================================================================
-// SET DEFAULT FONT
-//==============================================================================
+    //==============================================================================
+    // SET DEFAULT FONT
+    //==============================================================================
     LookAndFeel::getDefaultLookAndFeel().setDefaultSansSerifTypefaceName("Avenir Next");
     setFontParameters(&font);
     
-//==============================================================================
-// SLIDERS
-//==============================================================================
+    //==============================================================================
+    // SLIDERS
+    //==============================================================================
     timeSlider.addListener(this);
     timeSlider.setRange(0, 1000, 1);
     timeSlider.setSliderStyle(Slider::SliderStyle::LinearVertical);
@@ -131,9 +131,9 @@ RandomPannerAudioProcessorEditor::RandomPannerAudioProcessorEditor (RandomPanner
     smoothingLabel.setJustificationType(Justification::centred);
     addAndMakeVisible(smoothingSlider);
 
-//==============================================================================
-// COMBO BOX
-//==============================================================================
+    //==============================================================================
+    // COMBO BOX
+    //==============================================================================
     
     noteSelector.addListener(this);
     noteSelector.addItem("whole", 1);
@@ -148,9 +148,9 @@ RandomPannerAudioProcessorEditor::RandomPannerAudioProcessorEditor (RandomPanner
     noteSelector.setSelectedId(3);
     addAndMakeVisible(noteSelector);
     
-//==============================================================================
-// BUTTONS
-//==============================================================================
+    //==============================================================================
+    // BUTTONS
+    //==============================================================================
     
     tempoSyncEnabledButton.addListener(this);
     tempoSyncEnabledButton.setToggleState(audioProcessor.tempoSyncd, dontSendNotification);
@@ -181,9 +181,9 @@ RandomPannerAudioProcessorEditor::RandomPannerAudioProcessorEditor (RandomPanner
     
     hpEnabledButton.setLookAndFeel(&inButton);
     
-//==============================================================================
-// ATTACHMENTS
-//==============================================================================
+    //==============================================================================
+    // ATTACHMENTS
+    //==============================================================================
     
     sliderAttachments.emplace_back(new AudioProcessorValueTreeState::SliderAttachment(audioProcessor.treeState, "timeValue", timeSlider));
     sliderAttachments.emplace_back(new AudioProcessorValueTreeState::SliderAttachment(audioProcessor.treeState, "widthValue", widthSlider));

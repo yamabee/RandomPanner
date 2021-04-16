@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="tQhVIE" name="RandomPanner" projectType="audioplug" useAppConfig="0"
+<JUCERPROJECT id="tQhVIE" name="Random Panner" projectType="audioplug" useAppConfig="0"
               addUsingNamespaceToJuceHeader="1" displaySplashScreen="1" jucerFormatVersion="1">
-  <MAINGROUP id="tymhef" name="RandomPanner">
+  <MAINGROUP id="tymhef" name="Random Panner">
     <GROUP id="{5D4B767F-8883-EC1E-BAFF-1CE576CC4298}" name="Source">
       <FILE id="PcD7lp" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>
@@ -18,20 +18,12 @@
       <FILE id="L3nJ7l" name="Saturation.h" compile="0" resource="0" file="Source/Saturation.h"/>
       <FILE id="aYfZFJ" name="Biquad.cpp" compile="1" resource="0" file="../../AET5895-SP21/ClassExamples/BasicVerb/Source/Biquad.cpp"/>
       <FILE id="NQVhtm" name="Biquad.h" compile="0" resource="0" file="../../AET5895-SP21/ClassExamples/BasicVerb/Source/Biquad.h"/>
-      <FILE id="ES9aap" name="KnobLookAndFeel.cpp" compile="1" resource="0"
-            file="Source/KnobLookAndFeel.cpp"/>
-      <FILE id="HK4Nlk" name="KnobLookAndFeel.h" compile="0" resource="0"
-            file="Source/KnobLookAndFeel.h"/>
       <FILE id="TvBQ28" name="LargeKnob.h" compile="0" resource="0" file="Source/LargeKnob.h"/>
       <FILE id="XRR3ll" name="SmallKnob.h" compile="0" resource="0" file="Source/SmallKnob.h"/>
       <FILE id="R5yu7U" name="ToggleButtonIn.h" compile="0" resource="0"
             file="Source/ToggleButtonIn.h"/>
       <FILE id="uBmw7x" name="ToggleButtonSync.h" compile="0" resource="0"
             file="Source/ToggleButtonSync.h"/>
-      <FILE id="afslFP" name="SliderLookAndFeel.h" compile="0" resource="0"
-            file="Source/SliderLookAndFeel.h"/>
-      <FILE id="Q6egC5" name="ComboBoxLookAndFeel.h" compile="0" resource="0"
-            file="Source/ComboBoxLookAndFeel.h"/>
     </GROUP>
     <GROUP id="{B594A57F-A09E-3B55-6575-9ACF55248EDF}" name="Resources">
       <FILE id="pxNpwD" name="NewFaderLime.png" compile="0" resource="1"

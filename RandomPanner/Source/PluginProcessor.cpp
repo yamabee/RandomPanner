@@ -166,12 +166,14 @@ void RandomPannerAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
     
+    // Set the plug-in parameters
     randPan.setSmoothing(smoothing);
     saturation.setAlpha(satAlpha);
     lowPass.setFreq((double)lpFrequency);
     highPass.setFreq((double)hpFrequency);
     randPan.setWidth(width);
     
+    // Sync tempo to the DAW if sync button is enabled
     if (tempoSyncd) {
         playHead = this->getPlayHead(); // playhead pointer comes from the DAW we are assigning to the internal pointer in our plugin
         playHead->getCurrentPosition(currentPositionInfo); // passed by reference so it can be overwritten
@@ -187,14 +189,17 @@ void RandomPannerAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
         
     }
     
+    // uses the time parameter if sync button is disabled
     else { // not tempo sync'd
         randPan.setTimeMS(timeMS);
         
     }
     
-    randPan.processSignal(buffer);
-    saturation.processSignal(buffer);
+    // Block Processing
+//    randPan.processSignal(buffer);
+//    saturation.processSignal(buffer);
     
+    // Channel Processing
     for (int channel = 0; channel < totalNumInputChannels; ++channel)
         {
             for (int n = 0; n < buffer.getNumSamples() ; ++n){
@@ -240,7 +245,7 @@ void RandomPannerAudioProcessor::getStateInformation (juce::MemoryBlock& destDat
     copyXmlToBinary(*xml, destData);
     
 }
-
+//==============================================================================
 void RandomPannerAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
     // You should use this method to restore your parameters from this memory block,
@@ -251,14 +256,7 @@ void RandomPannerAudioProcessor::setStateInformation (const void* data, int size
     }
     
 }
-
 //==============================================================================
-// This creates new instances of the plugin..
-juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
-{
-    return new RandomPannerAudioProcessor();
-}
-
 void RandomPannerAudioProcessor::setButtonState(bool& buttonState) {
     if (buttonState == true) {
         buttonState = false;
@@ -266,4 +264,11 @@ void RandomPannerAudioProcessor::setButtonState(bool& buttonState) {
     else if (buttonState == false) {
         buttonState = true;
     }
+}
+
+//==============================================================================
+// This creates new instances of the plugin..
+juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
+{
+    return new RandomPannerAudioProcessor();
 }

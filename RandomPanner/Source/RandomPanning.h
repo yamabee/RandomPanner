@@ -25,8 +25,8 @@ public:
     void processSample(float x, float &leftSample, float &rightSample);
     float processSample(float x, int chan);
     
-    float processSampleL(float x);
-    float processSampleR(float x);
+//    float processSampleL(float x);
+//    float processSampleR(float x);
     
     void prepare(float newFs);
     
@@ -48,10 +48,9 @@ public:
     
 private:
     float Fs = 48000.f;
+    
     float bpm = 120.f;
-    
     NoteSelection noteSelect = QUARTER;
-    
     float noteDuration = 1.f; // 1 - quarter, 2 - half, 0.5 - 8th, 0.25 - 16th
     
     float timeMS = 500.f;
@@ -61,18 +60,21 @@ private:
     int minWidth = 0;
     int maxWidth = 100;
     
+    // Panning Parameters
     float panValue = rand() % 1;
     float leftAmp = sqrt(0.5f);
     float rightAmp = sqrt(0.5f);
     
+    int randomNumber = 0;
+    int randomNumberPrev = 0;
+    
+    int count = 1;
+    
+    // Smoothing Parameters
     float alphaSmooth = 0.1155f; // smoothing filter
     float leftAmpSmooth = sqrt(0.5f);
     float rightAmpSmooth = sqrt(0.5f);
-    
-    int count = 1;
+
     float y = 0.f;
-    
-    int randomNumber = 0;
-    int randomNumberPrev = 0;
     
 };

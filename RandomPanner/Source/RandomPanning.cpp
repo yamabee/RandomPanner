@@ -10,17 +10,16 @@
 
 #include "RandomPanning.h"
 
-// Constructor
+//============================================================================================
+// CONSTRUCTOR
+//============================================================================================
+
 RandomPanning::RandomPanning(){}
 
-void RandomPanning::processSignal(juce::AudioBuffer<float> &buffer) {
-    float* leftChannel = buffer.getWritePointer(0);
-    float* rightChannel = buffer.getWritePointer(1);
-    int N = buffer.getNumSamples();
-    
-    processSignal(leftChannel, rightChannel, N);
-    
-}
+//============================================================================================
+// PROCESSING BY CHANNEL
+//============================================================================================
+
 void RandomPanning::processSignal(float* leftChannel, float* rightChannel, const int N) {
     for (int n = 0; n < N; n++) {
         float xL = leftChannel[n];
@@ -32,16 +31,6 @@ void RandomPanning::processSignal(float* leftChannel, float* rightChannel, const
         
     }
 }
-
-//void RandomPanning::processSignal(float *signal, const int numSamples, const int chan) {
-//
-//    for (int n = 0; n < numSamples; n++) {
-//        float x = signal[n]; // get value at memory location
-//        x = processSample(x, chan);
-//        signal[n] = x;
-//
-//    }
-//}
 
 float RandomPanning::processSample(float x, int chan) {
     if (chan == 0) {
@@ -63,6 +52,29 @@ float RandomPanning::processSample(float x, int chan) {
     return y;
 }
 
+//void RandomPanning::processSignal(float *signal, const int numSamples, const int chan) {
+//
+//    for (int n = 0; n < numSamples; n++) {
+//        float x = signal[n]; // get value at memory location
+//        x = processSample(x, chan);
+//        signal[n] = x;
+//
+//    }
+//}
+
+//============================================================================================
+// PROCESSING BY BLOCK
+//============================================================================================
+
+void RandomPanning::processSignal(juce::AudioBuffer<float> &buffer) {
+    float* leftChannel = buffer.getWritePointer(0);
+    float* rightChannel = buffer.getWritePointer(1);
+    int N = buffer.getNumSamples();
+    
+    processSignal(leftChannel, rightChannel, N);
+    
+}
+
 void RandomPanning::processSample(float x, float &leftSample, float &rightSample) {
     leftAmpSmooth = alphaSmooth * leftAmpSmooth + (1-alphaSmooth) * leftAmp;
     leftSample = leftAmpSmooth * x;
@@ -79,29 +91,9 @@ void RandomPanning::processSample(float x, float &leftSample, float &rightSample
     }
 }
 
-//float RandomPanning::processSampleL(float x) {
-//
-//
-//    leftAmpSmooth = alphaSmooth * leftAmpSmooth + (1-alphaSmooth) * leftAmp;
-//    y = leftAmpSmooth * x;
-//
-//    return y;
-//}
-//
-//float RandomPanning::processSampleR(float x) {
-//    rightAmpSmooth = alphaSmooth * rightAmpSmooth + (1-alphaSmooth) * rightAmp;
-//    y = rightAmpSmooth * x;
-//    
-//    count++;
-//
-//    if (count >= timeSamples) {
-//        setPan();
-//        count = 1;
-//    }
-//
-//    return y;
-//}
-
+//============================================================================================
+// GETTERS AND SETTERS
+//============================================================================================
 
 void RandomPanning::prepare(float newFs) {
     Fs = newFs;
@@ -117,7 +109,6 @@ void RandomPanning::setBPM(float newBPM) {
 void RandomPanning::setTimeMS(float newTimeMS) {
     timeMS = newTimeMS;
     timeSamples = round(timeMS*Fs/1000.f);
-//    count = 1;
     
 }
 
