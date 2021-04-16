@@ -56,9 +56,7 @@ public:
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
     
-
-    
-    float timeMS = 100.f;
+    int timeMS = 300;
     RandomPanning::NoteSelection noteSelect = RandomPanning::NoteSelection::QUARTER;
     
     bool tempoSyncd = true;
@@ -67,12 +65,16 @@ public:
     bool hpEnabled = false;
     
     void setButtonState(bool& buttonState);
+    void setWidth();
     
-//    float width = 0.f;
+    int width = 100;
     float lpFrequency = 1000.f;
     float hpFrequency = 1000.f;
     int satAlpha = 1;
-    float smoothing = 0.15;
+    float smoothing = 0.15f;
+    
+    AudioProcessorValueTreeState treeState;
+    AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
     
 private:
     

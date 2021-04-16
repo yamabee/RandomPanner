@@ -22,12 +22,51 @@
             file="Source/KnobLookAndFeel.cpp"/>
       <FILE id="HK4Nlk" name="KnobLookAndFeel.h" compile="0" resource="0"
             file="Source/KnobLookAndFeel.h"/>
+      <FILE id="TvBQ28" name="LargeKnob.h" compile="0" resource="0" file="Source/LargeKnob.h"/>
+      <FILE id="XRR3ll" name="SmallKnob.h" compile="0" resource="0" file="Source/SmallKnob.h"/>
+      <FILE id="R5yu7U" name="ToggleButtonIn.h" compile="0" resource="0"
+            file="Source/ToggleButtonIn.h"/>
+      <FILE id="uBmw7x" name="ToggleButtonSync.h" compile="0" resource="0"
+            file="Source/ToggleButtonSync.h"/>
+      <FILE id="afslFP" name="SliderLookAndFeel.h" compile="0" resource="0"
+            file="Source/SliderLookAndFeel.h"/>
+      <FILE id="Q6egC5" name="ComboBoxLookAndFeel.h" compile="0" resource="0"
+            file="Source/ComboBoxLookAndFeel.h"/>
     </GROUP>
     <GROUP id="{B594A57F-A09E-3B55-6575-9ACF55248EDF}" name="Resources">
+      <FILE id="pxNpwD" name="NewFaderLime.png" compile="0" resource="1"
+            file="Resources/NewFaderLime.png"/>
+      <FILE id="czXHM5" name="FaderLime.png" compile="0" resource="1" file="Resources/FaderLime.png"/>
+      <FILE id="a0KhtC" name="InOffButton.png" compile="0" resource="1" file="Resources/InOffButton.png"/>
+      <FILE id="f14Trj" name="InOnButtonLime.png" compile="0" resource="1"
+            file="Resources/InOnButtonLime.png"/>
+      <FILE id="nk2nji" name="SyncOff.png" compile="0" resource="1" file="Resources/SyncOff.png"/>
+      <FILE id="AyZWlp" name="SyncOnLime.png" compile="0" resource="1" file="Resources/SyncOnLime.png"/>
       <FILE id="e3Bvl3" name="MainBackground.png" compile="0" resource="1"
             file="Resources/MainBackground.png"/>
       <FILE id="i0mL2O" name="personalizedKnob.png" compile="0" resource="1"
             file="Resources/personalizedKnob.png"/>
+      <FILE id="T5GUCQ" name="knobmanLime100.png" compile="0" resource="1"
+            file="Resources/knobmanLime100.png"/>
+      <FILE id="nz4kHq" name="knobmanPink.png" compile="0" resource="1" file="Resources/knobmanPink.png"/>
+      <FILE id="zFqTNj" name="maschineLimeSmall.png" compile="0" resource="1"
+            file="Resources/maschineLimeSmall.png"/>
+      <FILE id="c1QqiG" name="maschineLime100.png" compile="0" resource="1"
+            file="Resources/maschineLime100.png"/>
+      <FILE id="wGNKGW" name="maschineLime.png" compile="0" resource="1"
+            file="Resources/maschineLime.png"/>
+      <FILE id="cxKAt5" name="knobman_lumen2_pink_100frames.png" compile="0"
+            resource="1" file="Resources/knobman_lumen2_pink_100frames.png"/>
+      <FILE id="fNVkpF" name="On_Purple_74x20_6frames.png" compile="0" resource="1"
+            file="Resources/On_Purple_74x20_6frames.png"/>
+      <FILE id="yZaT1X" name="pinkDialKnob.png" compile="0" resource="1"
+            file="Resources/pinkDialKnob.png"/>
+      <FILE id="mtFkPv" name="SyncButton_Purple_74x20_6frames.png" compile="0"
+            resource="1" file="Resources/SyncButton_Purple_74x20_6frames.png"/>
+      <FILE id="iQXXJ5" name="Neve_purple_Knob.png" compile="0" resource="1"
+            file="Resources/Neve_purple_Knob.png"/>
+      <FILE id="hSK76B" name="neveKnob2.png" compile="0" resource="1" file="Resources/neveKnob2.png"/>
+      <FILE id="wy0MMS" name="neveKnob1.png" compile="0" resource="1" file="Resources/neveKnob1.png"/>
     </GROUP>
   </MAINGROUP>
   <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1" JUCE_VST3_CAN_REPLACE_VST2="0"/>

@@ -22,6 +22,7 @@ public:
 //    void processSignal(float* signal, const int numSamples, const int chan);
     void processSignal(float* leftChannel, float* rightChannel, const int N);
     void processSignal(juce::AudioBuffer<float> &buffer);
+    void processSample(float x, float &leftSample, float &rightSample);
     float processSample(float x, int chan);
     
     float processSampleL(float x);
@@ -41,6 +42,8 @@ public:
     void setPan();
     void setRandomNumber();
     
+    void setWidth(float newWidth);
+    
     void setSmoothing(float newAlphaSmooth);
     
 private:
@@ -54,8 +57,9 @@ private:
     float timeMS = 500.f;
     float timeSamples = round(timeMS*Fs/1000.f); // number of samples before random value changes
     
-//    float beatSamples = 24000.f;
-//    float noteSamples = 24000.f;
+    int width = 100;
+    int minWidth = 0;
+    int maxWidth = 100;
     
     float panValue = rand() % 1;
     float leftAmp = sqrt(0.5f);
@@ -68,7 +72,7 @@ private:
     int count = 1;
     float y = 0.f;
     
-    float randomNumber = 0;
-    float randomNumberPrev = 0;
+    int randomNumber = 0;
+    int randomNumberPrev = 0;
     
 };

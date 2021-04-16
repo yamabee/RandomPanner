@@ -15,11 +15,11 @@ RandomPannerAudioProcessor::RandomPannerAudioProcessor()
      : AudioProcessor (BusesProperties()
                      #if ! JucePlugin_IsMidiEffect
                       #if ! JucePlugin_IsSynth
-                       .withInput  ("Input",  juce::AudioChannelSet::stereo(), false)
+                       .withInput  ("Input",  juce::AudioChannelSet::stereo(), true)
                       #endif
                        .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
                      #endif
-                       )
+                       ), treeState(*this, nullptr, "RandPanSliderParams", createParameterLayout())
 #endif
 {
 }
@@ -27,6 +27,25 @@ RandomPannerAudioProcessor::RandomPannerAudioProcessor()
 RandomPannerAudioProcessor::~RandomPannerAudioProcessor()
 {
 }
+
+AudioProcessorValueTreeState::ParameterLayout RandomPannerAudioProcessor::createParameterLayout(){
+    std::vector<std::unique_ptr<RangedAudioParameter>>(params);
+    
+    params.push_back(std::make_unique<AudioParameterInt>("timeValue", "Time", 0, 1000, 300));
+    params.push_back(std::make_unique<AudioParameterInt>("widthValue", "Width", 2, 100, 100));
+    params.push_back(std::make_unique<AudioParameterFloat>("smoothValue", "Smoothing", 0.f, 1.f, 0.01f));
+    params.push_back(std::make_unique<AudioParameterInt>("lpCutOffValue", "Low Pass Cut-Off", 50, 18000, 1000));
+    params.push_back(std::make_unique<AudioParameterInt>("hpCutOffValue", "High Pass Cut-Off", 50, 18000, 1000));
+    params.push_back(std::make_unique<AudioParameterInt>("noteSelection", "Note Selection", 1, 9, 3));
+    params.push_back(std::make_unique<AudioParameterFloat>("saturationValue", "Saturation", 1, 10, 1));
+    params.push_back(std::make_unique<AudioParameterBool>("syncButton", "Sync Button", true));
+    params.push_back(std::make_unique<AudioParameterBool>("lpButton", "Low Pass Button", false));
+    params.push_back(std::make_unique<AudioParameterBool>("hpButton", "High Pass Button", false));
+    params.push_back(std::make_unique<AudioParameterBool>("saturationButton", "Saturation Button", false));
+    
+    return { params.begin(), params.end() };
+}
+
 
 //==============================================================================
 const juce::String RandomPannerAudioProcessor::getName() const
@@ -151,35 +170,36 @@ void RandomPannerAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
     saturation.setAlpha(satAlpha);
     lowPass.setFreq((double)lpFrequency);
     highPass.setFreq((double)hpFrequency);
+    randPan.setWidth(width);
     
-//    if (tempoSyncd) {
-//        playHead = this->getPlayHead(); // playhead pointer comes from the DAW we are assigning to the internal pointer in our plugin
-//        playHead->getCurrentPosition(currentPositionInfo); // passed by reference so it can be overwritten
-//        
-//        float newBPM = currentPositionInfo.bpm;
-//        
-//        if (bpm != newBPM) {
-//            // update randPan
-//            randPan.setBPM(newBPM);
-//            bpm = newBPM;
-//        }
-//        randPan.setNoteDuration(noteSelect);
-//        
-//    }
-//    
-//    else { // not tempo sync'd
-//        randPan.setTimeMS(timeMS);
-//        
-//    }
+    if (tempoSyncd) {
+        playHead = this->getPlayHead(); // playhead pointer comes from the DAW we are assigning to the internal pointer in our plugin
+        playHead->getCurrentPosition(currentPositionInfo); // passed by reference so it can be overwritten
+        
+        float newBPM = currentPositionInfo.bpm;
+        
+        if (bpm != newBPM) {
+            // update randPan
+            randPan.setBPM(newBPM);
+            bpm = newBPM;
+        }
+        randPan.setNoteDuration(noteSelect);
+        
+    }
     
-//    randPan.processSignal(buffer);
-//    saturation.processSignal(buffer);
+    else { // not tempo sync'd
+        randPan.setTimeMS(timeMS);
+        
+    }
+    
+    randPan.processSignal(buffer);
+    saturation.processSignal(buffer);
     
     for (int channel = 0; channel < totalNumInputChannels; ++channel)
         {
             for (int n = 0; n < buffer.getNumSamples() ; ++n){
                 float x = buffer.getReadPointer(channel)[n];
-                x = randPan.processSample(x, channel);
+                x = randPan.processSample(x,channel);
                 
                 if (saturationEnabled) {
                     x = saturation.processSample(x, channel);
@@ -215,12 +235,21 @@ void RandomPannerAudioProcessor::getStateInformation (juce::MemoryBlock& destDat
     // You should use this method to store your parameters in the memory block.
     // You could do that either as raw data, or use the XML or ValueTree classes
     // as intermediaries to make it easy to save and load complex data.
+    auto currentState = treeState.copyState();
+    std::unique_ptr<XmlElement> xml (currentState.createXml());
+    copyXmlToBinary(*xml, destData);
+    
 }
 
 void RandomPannerAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
     // You should use this method to restore your parameters from this memory block,
     // whose contents will have been created by the getStateInformation() call.
+    std::unique_ptr<XmlElement> xml (getXmlFromBinary(data, sizeInBytes));
+    if ( xml && xml->hasTagName(treeState.state.getType())) {
+        treeState.replaceState(ValueTree::fromXml(*xml));
+    }
+    
 }
 
 //==============================================================================

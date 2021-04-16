@@ -44,7 +44,6 @@ void RandomPanning::processSignal(float* leftChannel, float* rightChannel, const
 //}
 
 float RandomPanning::processSample(float x, int chan) {
-    
     if (chan == 0) {
         leftAmpSmooth = alphaSmooth * leftAmpSmooth + (1-alphaSmooth) * leftAmp;
         y = leftAmpSmooth * x;
@@ -61,9 +60,23 @@ float RandomPanning::processSample(float x, int chan) {
             
         }
     }
-    
     return y;
+}
+
+void RandomPanning::processSample(float x, float &leftSample, float &rightSample) {
+    leftAmpSmooth = alphaSmooth * leftAmpSmooth + (1-alphaSmooth) * leftAmp;
+    leftSample = leftAmpSmooth * x;
     
+    rightAmpSmooth = alphaSmooth * rightAmpSmooth + (1-alphaSmooth) * rightAmp;
+    rightSample = rightAmpSmooth * x;
+    
+    count++;
+    
+    if (count >= timeSamples) {
+        setPan();
+        count = 1;
+        
+    }
 }
 
 //float RandomPanning::processSampleL(float x) {
@@ -161,8 +174,6 @@ void RandomPanning::setNoteDuration(NoteSelection newNoteSelection) {
 void RandomPanning::setBeatSamples(){
     float bps = bpm/60.f;
     float secondsPerBeat = 1.f/bps;
-//    beatSamples = secondsPerBeat * Fs;
-//    noteSamples = beatSamples * noteDuration;
     float secondsPerNote = noteDuration * secondsPerBeat;
     float msPerNote = secondsPerNote * 1000.f;
     setTimeMS(msPerNote);
@@ -175,28 +186,34 @@ void RandomPanning::setSmoothing(float newAlphaSmooth) {
 
 void RandomPanning::setPan() {
     setRandomNumber();
-    panValue = randomNumber;
+    panValue = (float)randomNumber/100.f;
     leftAmp = sqrt(1-panValue);
     rightAmp = sqrt(panValue);
     
 }
 
 void RandomPanning::setRandomNumber() {
-    
-    if (randomNumberPrev <= 0.5) {
-        randomNumber = (float)rand()/RAND_MAX;
-        while (randomNumber <= 0.5) {
-            randomNumber = (float)rand()/RAND_MAX;
+    if (randomNumberPrev <= 50) {
+        randomNumber = rand() % (maxWidth - minWidth + 1) + minWidth;
+        while (randomNumber <= 50) {
+            randomNumber = rand() % (maxWidth - minWidth + 1) + minWidth;
         }
     }
-    
-    else if (randomNumberPrev > 0.5) {
-        randomNumber = (float)rand()/RAND_MAX;
-        while (randomNumber > 0.5) {
-            randomNumber = (float)rand()/RAND_MAX;
+    else if (randomNumberPrev > 50) {
+        randomNumber = rand() % (maxWidth - minWidth + 1) + minWidth;
+        while (randomNumber > 50) {
+            randomNumber = rand() % (maxWidth - minWidth + 1) + minWidth;
         }
     }
     
     randomNumberPrev = randomNumber;
+    
+}
+
+void RandomPanning::setWidth(float newWidth) {
+    width = newWidth;
+    
+    maxWidth = 50 + width/2;
+    minWidth = 50 - width/2;
     
 }
