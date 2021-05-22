@@ -101,20 +101,19 @@ RandomPannerAudioProcessorEditor::RandomPannerAudioProcessorEditor (RandomPanner
     hpFrequencyLabel.setJustificationType(Justification::centred);
     addAndMakeVisible(hpFrequencyLabel);
     
-    saturationSlider.addListener(this);
-    saturationSlider.setSliderStyle(Slider::SliderStyle::RotaryHorizontalVerticalDrag);
-    saturationSlider.setTextBoxStyle(Slider::TextBoxBelow, false, 50, 20);
-    saturationSlider.setRange(1, 10, 1);
-    addAndMakeVisible(saturationSlider);
+    thresholdSlider.addListener(this);
+    thresholdSlider.setSliderStyle(Slider::SliderStyle::RotaryHorizontalVerticalDrag);
+    thresholdSlider.setTextBoxStyle(Slider::TextBoxBelow, false, 75, 20);
+    addAndMakeVisible(thresholdSlider);
 
-    saturationSlider.setLookAndFeel(&smallKnob);
+    thresholdSlider.setLookAndFeel(&smallKnob);
 
-    saturationLabel.setText("saturation", dontSendNotification);
-    saturationLabel.attachToComponent(&saturationSlider, false);
-    saturationLabel.setFont(font);
-    saturationLabel.setColour(Label::textColourId, Colours::silver);
-    saturationLabel.setJustificationType(Justification::centred);
-    addAndMakeVisible(saturationLabel);
+    thresholdLabel.setText("threshold", dontSendNotification);
+    thresholdLabel.attachToComponent(&thresholdSlider, false);
+    thresholdLabel.setFont(font);
+    thresholdLabel.setColour(Label::textColourId, Colours::silver);
+    thresholdLabel.setJustificationType(Justification::centred);
+    addAndMakeVisible(thresholdLabel);
     
     smoothingSlider.addListener(this);
     smoothingSlider.setSliderStyle(Slider::SliderStyle::RotaryHorizontalVerticalDrag);
@@ -155,17 +154,20 @@ RandomPannerAudioProcessorEditor::RandomPannerAudioProcessorEditor (RandomPanner
     tempoSyncEnabledButton.addListener(this);
     tempoSyncEnabledButton.setToggleState(audioProcessor.tempoSyncd, dontSendNotification);
     noteSelector.setEnabled(audioProcessor.tempoSyncd);
-    timeSlider.setEnabled(!audioProcessor.tempoSyncd);
+    timeSlider.setEnabled(audioProcessor.timeEnabled);
+    thresholdSlider.setEnabled(audioProcessor.thresholdEnabled);
     addAndMakeVisible(tempoSyncEnabledButton);
     
     tempoSyncEnabledButton.setLookAndFeel(&syncButton);
     
-    saturationEnabledButton.addListener(this);
-    saturationEnabledButton.setToggleState(audioProcessor.saturationEnabled, dontSendNotification);
-    saturationSlider.setEnabled(audioProcessor.saturationEnabled);
-    addAndMakeVisible(saturationEnabledButton);
+    thresholdEnabledButton.addListener(this);
+    thresholdEnabledButton.setToggleState(audioProcessor.thresholdEnabled, dontSendNotification);
+    thresholdSlider.setEnabled(audioProcessor.thresholdEnabled);
+    noteSelector.setEnabled(audioProcessor.tempoSyncd);
+    timeSlider.setEnabled(audioProcessor.timeEnabled);
+    addAndMakeVisible(thresholdEnabledButton);
     
-    saturationEnabledButton.setLookAndFeel(&inButton);
+    thresholdEnabledButton.setLookAndFeel(&inButton);
     
     lpEnabledButton.addListener(this);
     lpEnabledButton.setToggleState(audioProcessor.lpEnabled, dontSendNotification);
@@ -190,14 +192,19 @@ RandomPannerAudioProcessorEditor::RandomPannerAudioProcessorEditor (RandomPanner
     sliderAttachments.emplace_back(new AudioProcessorValueTreeState::SliderAttachment(audioProcessor.treeState, "smoothValue", smoothingSlider));
     sliderAttachments.emplace_back(new AudioProcessorValueTreeState::SliderAttachment(audioProcessor.treeState, "lpCutOffValue", lpCutOffSlider));
     sliderAttachments.emplace_back(new AudioProcessorValueTreeState::SliderAttachment(audioProcessor.treeState, "hpCutOffValue", hpCutOffSlider));
-    sliderAttachments.emplace_back(new AudioProcessorValueTreeState::SliderAttachment(audioProcessor.treeState, "saturationValue", saturationSlider));
+    sliderAttachments.emplace_back(new AudioProcessorValueTreeState::SliderAttachment(audioProcessor.treeState, "thresholdValue", thresholdSlider));
     
     comboBoxAttachment.emplace_back(new AudioProcessorValueTreeState::ComboBoxAttachment(audioProcessor.treeState, "noteSelection", noteSelector));
     
     buttonAttachments.emplace_back(new AudioProcessorValueTreeState::ButtonAttachment(audioProcessor.treeState, "syncButton", tempoSyncEnabledButton));
     buttonAttachments.emplace_back(new AudioProcessorValueTreeState::ButtonAttachment(audioProcessor.treeState, "lpButton", lpEnabledButton));
     buttonAttachments.emplace_back(new AudioProcessorValueTreeState::ButtonAttachment(audioProcessor.treeState, "hpButton", hpEnabledButton));
-    buttonAttachments.emplace_back(new AudioProcessorValueTreeState::ButtonAttachment(audioProcessor.treeState, "saturationButton", saturationEnabledButton));
+    buttonAttachments.emplace_back(new AudioProcessorValueTreeState::ButtonAttachment(audioProcessor.treeState, "thresholdButton", thresholdEnabledButton));
+    
+    // Slider parameters post attachments
+    thresholdSlider.textFromValueFunction = nullptr;
+    thresholdSlider.setNumDecimalPlacesToDisplay(3);
+    thresholdSlider.setRange(0.001f, 0.500f, 0.001f);
     
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
@@ -224,11 +231,10 @@ void RandomPannerAudioProcessorEditor::resized()
     
     const int border = 20;
     
-//    Rectangle<int> totalArea = getLocalBounds();
     Rectangle<int> panningSection(0, 0, 500, 300);
     
     Rectangle<int> filterSection(500, 0, 150, 300);
-    Rectangle<int> saturationSection(650, 0, 150, 300);
+    Rectangle<int> thresholdSection(650, 0, 150, 300);
     
     Rectangle<int> timeArea = panningSection.withTrimmedRight(325).withTrimmedLeft(0).withTrimmedTop(20).withTrimmedBottom(20).reduced(border);
     
@@ -241,19 +247,19 @@ void RandomPannerAudioProcessorEditor::resized()
     Rectangle<int> hpfArea = filterSection.withTrimmedTop(30).withTrimmedBottom(150).reduced(border);
     Rectangle<int> lpfArea = filterSection.withTrimmedTop(165).withTrimmedBottom(15).reduced(border);
     
-    Rectangle<int> saturationArea = saturationSection.withTrimmedRight(10).withTrimmedTop(90).withTrimmedBottom(90).reduced(border);
+    Rectangle<int> thresholdArea = thresholdSection.withTrimmedRight(10).withTrimmedTop(90).withTrimmedBottom(90).reduced(border);
     
     timeSlider.setBounds(timeArea);
     widthSlider.setBounds(widthArea);
     noteSelector.setBounds(noteSelectorArea);
     lpCutOffSlider.setBounds(lpfArea);
     hpCutOffSlider.setBounds(hpfArea);
-    saturationSlider.setBounds(saturationArea);
+    thresholdSlider.setBounds(thresholdArea);
     smoothingSlider.setBounds(smoothingArea);
     
     tempoSyncEnabledButton.setBounds(210, 230, 74, 20);
     
-    saturationEnabledButton.setBounds(660, 125, 25, 25);
+    thresholdEnabledButton.setBounds(660, 125, 25, 25);
     lpEnabledButton.setBounds(513, 200, 25, 25);
     hpEnabledButton.setBounds(513,65,25,25);
     
@@ -271,8 +277,8 @@ void RandomPannerAudioProcessorEditor::sliderValueChanged(Slider* slider) {
     if (slider == &hpCutOffSlider) {
         audioProcessor.hpFrequency = hpCutOffSlider.getValue();
     }
-    if (slider == &saturationSlider) {
-        audioProcessor.satAlpha = saturationSlider.getValue();
+    if (slider == &thresholdSlider) {
+        audioProcessor.threshold = thresholdSlider.getValue();
     }
     if (slider == &smoothingSlider) {
         audioProcessor.smoothing = smoothingSlider.getValue();
@@ -326,18 +332,36 @@ void RandomPannerAudioProcessorEditor::comboBoxChanged(ComboBox* comboBox) {
 void RandomPannerAudioProcessorEditor::setButtonDisabled(Button* button) {
     if (button == &tempoSyncEnabledButton) {
         tempoSyncButtonState = ButtonState::Disabled;
-        audioProcessor.setButtonState(audioProcessor.tempoSyncd);
-        tempoSyncEnabledButton.setToggleState(audioProcessor.tempoSyncd, dontSendNotification);
+        thresholdButtonState = ButtonState::Disabled;
+        
         audioProcessor.tempoSyncd = false;
-        timeSlider.setEnabled(true);
+        tempoSyncEnabledButton.setToggleState(audioProcessor.tempoSyncd, dontSendNotification);
         noteSelector.setEnabled(false);
+        
+        audioProcessor.thresholdEnabled = false; // maybe delete if it doesn't work
+        thresholdEnabledButton.setToggleState(audioProcessor.thresholdEnabled, dontSendNotification);
+        thresholdSlider.setEnabled(false);
+        
+        audioProcessor.timeEnabled = true;
+        timeSlider.setEnabled(true);
+        
     }
     
-    if (button == &saturationEnabledButton) {
-        saturationButtonState = ButtonState::Disabled;
-        audioProcessor.setButtonState(audioProcessor.saturationEnabled);
-        saturationEnabledButton.setToggleState(audioProcessor.saturationEnabled, dontSendNotification);
-        saturationSlider.setEnabled(audioProcessor.saturationEnabled);
+    if (button == &thresholdEnabledButton) {
+        thresholdButtonState = ButtonState::Disabled;
+        tempoSyncButtonState = ButtonState::Disabled;
+        
+        audioProcessor.thresholdEnabled = false;
+        thresholdEnabledButton.setToggleState(audioProcessor.thresholdEnabled, dontSendNotification);
+        thresholdSlider.setEnabled(false);
+        
+        audioProcessor.tempoSyncd = false;
+        tempoSyncEnabledButton.setToggleState(audioProcessor.tempoSyncd, dontSendNotification);
+        noteSelector.setEnabled(false);
+        
+        audioProcessor.timeEnabled = true;
+        timeSlider.setEnabled(true);
+        
     }
     
     if (button == &lpEnabledButton) {
@@ -358,18 +382,36 @@ void RandomPannerAudioProcessorEditor::setButtonDisabled(Button* button) {
 void RandomPannerAudioProcessorEditor::setButtonEnabled(Button* button) {
     if (button == &tempoSyncEnabledButton) {
         tempoSyncButtonState = ButtonState::Enabled;
-        audioProcessor.setButtonState(audioProcessor.tempoSyncd);
-        tempoSyncEnabledButton.setToggleState(audioProcessor.tempoSyncd, dontSendNotification);
+        thresholdButtonState = ButtonState::Disabled;
+        
         audioProcessor.tempoSyncd = true;
-        timeSlider.setEnabled(false);
+        tempoSyncEnabledButton.setToggleState(audioProcessor.tempoSyncd, dontSendNotification);
         noteSelector.setEnabled(true);
+        
+        audioProcessor.thresholdEnabled = false;
+        thresholdEnabledButton.setToggleState(audioProcessor.thresholdEnabled, dontSendNotification);
+        thresholdSlider.setEnabled(false);
+        
+        audioProcessor.timeEnabled = false;
+        timeSlider.setEnabled(false);
+        
     }
     
-    if (button == &saturationEnabledButton) {
-        saturationButtonState = ButtonState::Enabled;
-        audioProcessor.setButtonState(audioProcessor.saturationEnabled);
-        saturationEnabledButton.setToggleState(audioProcessor.saturationEnabled, dontSendNotification);
-        saturationSlider.setEnabled(audioProcessor.saturationEnabled);
+    if (button == &thresholdEnabledButton) {
+        thresholdButtonState = ButtonState::Enabled;
+        tempoSyncButtonState = ButtonState::Disabled;
+        
+        audioProcessor.thresholdEnabled = true;
+        thresholdEnabledButton.setToggleState(audioProcessor.thresholdEnabled, dontSendNotification);
+        thresholdSlider.setEnabled(true);
+        
+        audioProcessor.tempoSyncd = false;
+        tempoSyncEnabledButton.setToggleState(false, dontSendNotification);
+        noteSelector.setEnabled(false);
+        
+        audioProcessor.timeEnabled = false;
+        timeSlider.setEnabled(false);
+        
     }
     
     if (button == &lpEnabledButton) {
@@ -392,25 +434,28 @@ void RandomPannerAudioProcessorEditor::buttonClicked(Button* button) {
         if (tempoSyncButtonState == ButtonState::Enabled) {
             tempoSyncEnabledButton.onClick = [this]() {
                 setButtonDisabled(&tempoSyncEnabledButton);
+
+                
             };
         }
         else if (tempoSyncButtonState == ButtonState::Disabled) {
             tempoSyncEnabledButton.onClick = [this]() {
                 setButtonEnabled(&tempoSyncEnabledButton);
+                
             };
         }
     }
     
-    if (button == &saturationEnabledButton) {
-        if (saturationButtonState == ButtonState::Disabled) {
-            saturationEnabledButton.onClick = [this]() {
-                setButtonEnabled(&saturationEnabledButton);
+    if (button == &thresholdEnabledButton) {
+        if (thresholdButtonState == ButtonState::Disabled) {
+            thresholdEnabledButton.onClick = [this]() {
+                setButtonEnabled(&thresholdEnabledButton);
                 
             };
         }
-        else if (saturationButtonState == ButtonState::Enabled) {
-            saturationEnabledButton.onClick = [this]() {
-                setButtonDisabled(&saturationEnabledButton);
+        else if (thresholdButtonState == ButtonState::Enabled) {
+            thresholdEnabledButton.onClick = [this]() {
+                setButtonDisabled(&thresholdEnabledButton);
                 
             };
         }

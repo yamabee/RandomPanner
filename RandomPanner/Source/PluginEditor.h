@@ -15,6 +15,7 @@
 #include "LargeKnob.h"
 #include "ToggleButtonIn.h"
 #include "ToggleButtonSync.h"
+#include "ToggleButtonTime.h"
 
 //==============================================================================
 /**
@@ -60,33 +61,34 @@ private:
     Slider hpCutOffSlider;
     Label hpFrequencyLabel;
     
-    Slider saturationSlider;
-    Label saturationLabel;
+    Slider thresholdSlider;
+    Label thresholdLabel;
     
     Slider smoothingSlider;
     Label smoothingLabel;
     
     SmallKnob smallKnob;
     LargeKnob largeKnob;
-//    SliderLookAndFeel slideLAF;
     
     ToggleButtonIn inButton;
     ToggleButtonSync syncButton;
+    ToggleButtonTime timeButton;
     
     enum class ButtonState {
         Enabled,
         Disabled
     };
     
-    ButtonState saturationButtonState { ButtonState::Disabled };
+    ButtonState thresholdButtonState { ButtonState::Disabled };
     ButtonState lpButtonState { ButtonState::Disabled };
     ButtonState hpButtonState { ButtonState::Disabled };
-    ButtonState tempoSyncButtonState { ButtonState::Enabled };
+    ButtonState tempoSyncButtonState { ButtonState::Disabled };
 
-    ToggleButton saturationEnabledButton;
+    ToggleButton thresholdEnabledButton;
     ToggleButton lpEnabledButton;
     ToggleButton hpEnabledButton;
     ToggleButton tempoSyncEnabledButton;
+    ToggleButton timeEnabledButton;
     
     Font font;
     

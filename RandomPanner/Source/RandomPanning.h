@@ -19,14 +19,12 @@ public:
     // Constructor
     RandomPanning();
     
-//    void processSignal(float* signal, const int numSamples, const int chan);
     void processSignal(float* leftChannel, float* rightChannel, const int N);
     void processSignal(juce::AudioBuffer<float> &buffer);
     void processSample(float x, float &leftSample, float &rightSample);
     float processSample(float x, int chan);
     
-//    float processSampleL(float x);
-//    float processSampleR(float x);
+    float processSampleTransient(float x, int chan);
     
     void prepare(float newFs);
     
@@ -45,6 +43,8 @@ public:
     void setWidth(float newWidth);
     
     void setSmoothing(float newAlphaSmooth);
+    
+    void setThreshold(float newThreshold);
     
 private:
     float Fs = 48000.f;

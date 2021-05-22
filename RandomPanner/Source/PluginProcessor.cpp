@@ -37,11 +37,11 @@ AudioProcessorValueTreeState::ParameterLayout RandomPannerAudioProcessor::create
     params.push_back(std::make_unique<AudioParameterInt>("lpCutOffValue", "Low Pass Cut-Off", 50, 18000, 1000));
     params.push_back(std::make_unique<AudioParameterInt>("hpCutOffValue", "High Pass Cut-Off", 50, 18000, 1000));
     params.push_back(std::make_unique<AudioParameterInt>("noteSelection", "Note Selection", 1, 9, 3));
-    params.push_back(std::make_unique<AudioParameterFloat>("saturationValue", "Saturation", 1, 10, 1));
-    params.push_back(std::make_unique<AudioParameterBool>("syncButton", "Sync Button", true));
+    params.push_back(std::make_unique<AudioParameterFloat>("thresholdValue", "Threshold", 0.001f, 0.500f, 0.001f));
+    params.push_back(std::make_unique<AudioParameterBool>("syncButton", "Sync Button", false));
     params.push_back(std::make_unique<AudioParameterBool>("lpButton", "Low Pass Button", false));
     params.push_back(std::make_unique<AudioParameterBool>("hpButton", "High Pass Button", false));
-    params.push_back(std::make_unique<AudioParameterBool>("saturationButton", "Saturation Button", false));
+    params.push_back(std::make_unique<AudioParameterBool>("thresholdButton", "Threshold Button", false));
     
     return { params.begin(), params.end() };
 }
@@ -168,59 +168,71 @@ void RandomPannerAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
     
     // Set the plug-in parameters
     randPan.setSmoothing(smoothing);
-    saturation.setAlpha(satAlpha);
+    transientAnalysis.setThreshold(threshold); // set to transient threshold
     lowPass.setFreq((double)lpFrequency);
     highPass.setFreq((double)hpFrequency);
     randPan.setWidth(width);
     
     // Sync tempo to the DAW if sync button is enabled
-    if (tempoSyncd) {
-        playHead = this->getPlayHead(); // playhead pointer comes from the DAW we are assigning to the internal pointer in our plugin
-        playHead->getCurrentPosition(currentPositionInfo); // passed by reference so it can be overwritten
-        
-        float newBPM = currentPositionInfo.bpm;
-        
-        if (bpm != newBPM) {
-            // update randPan
-            randPan.setBPM(newBPM);
-            bpm = newBPM;
-        }
-        randPan.setNoteDuration(noteSelect);
-        
-    }
+//    if (tempoSyncd) {
+//        playHead = this->getPlayHead(); // playhead pointer comes from the DAW we are assigning to the internal pointer in our plugin
+//        playHead->getCurrentPosition(currentPositionInfo); // passed by reference so it can be overwritten
+//
+//        float newBPM = currentPositionInfo.bpm;
+//
+//        if (bpm != newBPM) {
+//            // update randPan
+//            randPan.setBPM(newBPM);
+//            bpm = newBPM;
+//        }
+//        randPan.setNoteDuration(noteSelect);
+//
+//    }
+//
+//    // uses the time parameter if sync button is disabled
+//    else if (timeEnabled) { // not tempo sync'd
+//        randPan.setTimeMS(timeMS);
+//
+//    }
     
-    // uses the time parameter if sync button is disabled
-    else { // not tempo sync'd
-        randPan.setTimeMS(timeMS);
-        
-    }
-    
-    // Block Processing
+      // Block Processing
 //    randPan.processSignal(buffer);
 //    saturation.processSignal(buffer);
     
     // Channel Processing
-    for (int channel = 0; channel < totalNumInputChannels; ++channel)
+    for (int n = 0; n < buffer.getNumSamples() ; ++n){
+        for (int channel = 0; channel < totalNumInputChannels; ++channel)
         {
-            for (int n = 0; n < buffer.getNumSamples() ; ++n){
-                float x = buffer.getReadPointer(channel)[n];
+            
+            float x = buffer.getReadPointer(channel)[n];
+            if (timeEnabled || tempoSyncd) {
                 x = randPan.processSample(x,channel);
-                
-                if (saturationEnabled) {
-                    x = saturation.processSample(x, channel);
-                }
-                
-                if (lpEnabled) {
-                    x = lowPass.processSample(x, channel);
-                }
-                
-                if (hpEnabled) {
-                    x = highPass.processSample(x, channel);
-                }
-                
-                buffer.getWritePointer(channel)[n] = x;
             }
+            
+            if (thresholdEnabled) {
+                transientAnalysis.analyzeSample(x,channel);
+                transientFlag = transientAnalysis.getFlag();
+                if (transientFlag == true && previousTransientFlag == false) {
+                    randPan.setPan();
+                    previousTransientFlag = true;
+                }
+                if (transientFlag == false && previousTransientFlag == true) {
+                    previousTransientFlag = false;
+                }
+                x = randPan.processSampleTransient(x, channel);
+            }
+            
+            if (lpEnabled) {
+                x = lowPass.processSample(x, channel);
+            }
+            
+            if (hpEnabled) {
+                x = highPass.processSample(x, channel);
+            }
+            
+            buffer.getWritePointer(channel)[n] = x;
         }
+    }
 }
     
 //==============================================================================

@@ -24,8 +24,18 @@
             file="Source/ToggleButtonIn.h"/>
       <FILE id="uBmw7x" name="ToggleButtonSync.h" compile="0" resource="0"
             file="Source/ToggleButtonSync.h"/>
+      <FILE id="NDLO2l" name="ToggleButtonTime.h" compile="0" resource="0"
+            file="Source/ToggleButtonTime.h"/>
+      <FILE id="eQaTzH" name="TransientAnalysis.cpp" compile="1" resource="0"
+            file="Source/TransientAnalysis.cpp"/>
+      <FILE id="Oq35GR" name="TransientAnalysis.h" compile="0" resource="0"
+            file="Source/TransientAnalysis.h"/>
     </GROUP>
     <GROUP id="{B594A57F-A09E-3B55-6575-9ACF55248EDF}" name="Resources">
+      <FILE id="TZVaJN" name="TempoOff.png" compile="0" resource="1" file="Resources/TempoOff.png"/>
+      <FILE id="s6ZXdr" name="TempoOnLime.png" compile="0" resource="1" file="Resources/TempoOnLime.png"/>
+      <FILE id="M62qfh" name="TimeOff.png" compile="0" resource="1" file="Resources/TimeOff.png"/>
+      <FILE id="ALNhJP" name="TimeOnLime.png" compile="0" resource="1" file="Resources/TimeOnLime.png"/>
       <FILE id="pxNpwD" name="NewFaderLime.png" compile="0" resource="1"
             file="Resources/NewFaderLime.png"/>
       <FILE id="czXHM5" name="FaderLime.png" compile="0" resource="1" file="Resources/FaderLime.png"/>

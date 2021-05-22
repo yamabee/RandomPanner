@@ -36,10 +36,6 @@ float RandomPanning::processSample(float x, int chan) {
     if (chan == 0) {
         leftAmpSmooth = alphaSmooth * leftAmpSmooth + (1-alphaSmooth) * leftAmp;
         y = leftAmpSmooth * x;
-    }
-    else if (chan == 1) {
-        rightAmpSmooth = alphaSmooth * rightAmpSmooth + (1-alphaSmooth) * rightAmp;
-        y = rightAmpSmooth * x;
         
         count++;
         
@@ -49,18 +45,27 @@ float RandomPanning::processSample(float x, int chan) {
             
         }
     }
+    else if (chan == 1) {
+        rightAmpSmooth = alphaSmooth * rightAmpSmooth + (1-alphaSmooth) * rightAmp;
+        y = rightAmpSmooth * x;
+        
+    }
     return y;
 }
 
-//void RandomPanning::processSignal(float *signal, const int numSamples, const int chan) {
-//
-//    for (int n = 0; n < numSamples; n++) {
-//        float x = signal[n]; // get value at memory location
-//        x = processSample(x, chan);
-//        signal[n] = x;
-//
-//    }
-//}
+float RandomPanning::processSampleTransient(float x, int chan) {
+    if (chan == 0) {
+        leftAmpSmooth = alphaSmooth * leftAmpSmooth + (1-alphaSmooth) * leftAmp;
+        y = leftAmpSmooth * x;
+    }
+    
+    else if (chan == 1) {
+        rightAmpSmooth = alphaSmooth * rightAmpSmooth + (1-alphaSmooth) * rightAmp;
+        y = rightAmpSmooth * x;
+    }
+    
+    return y;
+}
 
 //============================================================================================
 // PROCESSING BY BLOCK

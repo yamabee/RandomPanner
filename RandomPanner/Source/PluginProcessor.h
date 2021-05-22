@@ -12,6 +12,7 @@
 #include "RandomPanning.h"
 #include "Saturation.h"
 #include "Biquad.h"
+#include "TransientAnalysis.h"
 
 //==============================================================================
 /**
@@ -59,19 +60,25 @@ public:
     int timeMS = 300;
     RandomPanning::NoteSelection noteSelect = RandomPanning::NoteSelection::QUARTER;
     
-    bool tempoSyncd = true;
-    bool saturationEnabled = false;
+    bool tempoSyncd = false;
+    bool timeEnabled = true;
+    bool thresholdEnabled = false;
+    
     bool lpEnabled = false;
     bool hpEnabled = false;
     
     void setButtonState(bool& buttonState);
-    void setWidth();
     
+    void setWidth();
     int width = 100;
+    
     float lpFrequency = 1000.f;
     float hpFrequency = 1000.f;
-    int satAlpha = 1;
+    float threshold = 0.001f;
     float smoothing = 0.15f;
+    
+    bool transientFlag = false;
+    bool previousTransientFlag = false;
     
     AudioProcessorValueTreeState treeState;
     AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
@@ -79,7 +86,8 @@ public:
 private:
     
     RandomPanning randPan;
-    Saturation saturation;
+//    Saturation saturation;
+    TransientAnalysis transientAnalysis;
     Biquad lowPass;
     Biquad highPass;
     

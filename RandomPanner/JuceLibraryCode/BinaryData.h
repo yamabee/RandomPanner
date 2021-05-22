@@ -8,6 +8,18 @@
 
 namespace BinaryData
 {
+    extern const char*   TempoOff_png;
+    const int            TempoOff_pngSize = 1381;
+
+    extern const char*   TempoOnLime_png;
+    const int            TempoOnLime_pngSize = 2143;
+
+    extern const char*   TimeOff_png;
+    const int            TimeOff_pngSize = 1088;
+
+    extern const char*   TimeOnLime_png;
+    const int            TimeOnLime_pngSize = 1831;
+
     extern const char*   NewFaderLime_png;
     const int            NewFaderLime_pngSize = 2128;
 
@@ -69,7 +81,7 @@ namespace BinaryData
     const int            neveKnob1_pngSize = 1392196;
 
     // Number of elements in the namedResourceList and originalFileNames arrays.
-    const int namedResourceListSize = 20;
+    const int namedResourceListSize = 24;
 
     // Points to the start of a list of resource names.
     extern const char* namedResourceList[];
